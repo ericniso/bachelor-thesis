@@ -63,6 +63,18 @@
   \space \number\year}
 
 %-------------------------------------------------------------------------------
+% LANGUAGES
+%-------------------------------------------------------------------------------
+\usepackage[english,italian]{babel}
+
+%-------------------------------------------------------------------------------
+% REMOVE CHAPTER NUMBER
+%-------------------------------------------------------------------------------
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+    {\normalfont\bfseries}{}{0pt}{\Huge}
+
+%-------------------------------------------------------------------------------
 % SPACING RULES
 %-------------------------------------------------------------------------------
 \usepackage{setspace}
@@ -83,97 +95,6 @@
                {0.25in}  % head sep
                {   9pt}  % foot height
                { 0.3in}  % foot sep
-%-------------------------------------------------------------------------------
-
-%-------------------------------------------------------------------------------
-% DECLARATION OF AUTHORSHIP
-%
-% Use the \Declaration command to print the Declaration of Authorship page
-%-------------------------------------------------------------------------------
-\newcommand\Declaration{
-    \btypeout{Declaration of Authorship}
-    \addtotoc{Declaration of Authorship}
-    \addtocontents{toc}{\vspace{1em}} % Add gap in the Contents, for aesthetics
-    \thispagestyle{plain}
-    \null\vfil
-    \begin{center}{\huge\bf Declaration of Authorship\par}\end{center}
-    {\normalsize
-I, \authornames, declare that this \doctype{} titled, `\ttitle' and the work
-presented in it are my own. I confirm that:
-
-\begin{itemize}
-    \item[\tiny{$\blacksquare$}] This work was done wholly or mainly while in
-        candidature for a research degree at this University.
-    \item[\tiny{$\blacksquare$}] Where any part of this thesis has previously
-        been submitted for a degree or any other qualification at this
-        University or any other institution, this has been clearly stated.
-    \item[\tiny{$\blacksquare$}] Where I have consulted the published work of
-        others, this is always clearly attributed.
-    \item[\tiny{$\blacksquare$}] Where I have quoted from the work of others,
-        the source is always given. With the exception of such quotations, this
-        thesis is entirely my own work.
-    \item[\tiny{$\blacksquare$}] I have acknowledged all main sources of help.
-    \item[\tiny{$\blacksquare$}] Where the thesis is based on work done by
-        myself jointly with others, I have made clear exactly what was done by
-        others and what I have contributed myself.\\
-\end{itemize}
-
-Signed:\\
-\rule[1em]{25em}{0.5pt} % This prints a line for the signature
-
-Date:\\
-\rule[1em]{25em}{0.5pt} % This prints a line to write the date
-    }
-
-    \vfil\vfil\null
-    \clearpage % Start a new page
-}
-%-------------------------------------------------------------------------------
-
-%-------------------------------------------------------------------------------
-% CERTIFICATE PAGE
-%
-% Use the \Certificate command to print the Certificate in the document
-%-------------------------------------------------------------------------------
-\newcommand\Certificate{
-    \btypeout{Certificate}
-    \addtotoc{Certificate}
-    \addtocontents{toc}{\vspace{1em}}
-    \thispagestyle{plain}
-    \null\vfil
-    \begin{center}{\huge\bf Certificate\par}\end{center}
-    {\normalsize
-This is to certify that the thesis entitled, ``\emph{\ttitle}'' and submitted by
-\underline{\authornames} ID No. \underline{\idnum} in partial fulfillment of the
-requirements of \ccode{} \cname{} embodies the work done by him under my
-supervision.\\[2.5cm]
-\begin{minipage}{0.5\textwidth}
-    \begin{flushleft} \large
-        \vspace{2cm}
-        \rule[0.5em]{13em}{0.5pt}\\
-        \emph{Supervisor}\\
-        \supname\\
-        \suppos,\\
-        \supinst\\
-        Date:\\
-    \end{flushleft}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
-    \begin{flushleft} \large
-        \vspace{2cm}
-        \rule[0.5em]{13em}{0.5pt}\\
-        \emph{Co-Supervisor} \\
-        \cosupname\\
-        \cosuppos,\\
-        \cosupinst\\
-        Date:\\
-    \end{flushleft}
-\end{minipage}\\[3cm]
-    }
-
-    \vfil\vfil\null
-    \clearpage
-}
 %-------------------------------------------------------------------------------
 
 %-------------------------------------------------------------------------------
@@ -271,7 +192,7 @@ supervision.\\[2.5cm]
         stringstyle=\color[rgb]{0.7,0,0} }
 \usepackage[pdfpagemode={UseOutlines},bookmarks=true,bookmarksopen=true,
    bookmarksopenlevel=0,bookmarksnumbered=true,hypertexnames=false,
-   colorlinks,linkcolor={blue},citecolor={red},urlcolor={black},
+   colorlinks,linkcolor={black},citecolor={black},urlcolor={black},
    pdfstartview={FitV},unicode,breaklinks=true]{hyperref}
 
 \usepackage[toc]{glossaries}
@@ -309,83 +230,23 @@ supervision.\\[2.5cm]
 \newcommand*{\subject}[1]{\def\subjectname{#1}}
 \newcommand*{\keywords}[1]{\def\keywordnames{#1}}
 
-
-%-------------------------------------------------------------------------------
-% TITLE PAGE
-%
-% Redefine the \maketitle command to create a custom title page
-% ------------------------------------------------------------------------------
-\renewcommand\maketitle{
-    \btypeout{Title Page}
-
-    % PDF meta-data
-    \hypersetup{pdftitle={\ttitle}}
-    \hypersetup{pdfsubject=\subjectname}
-    \hypersetup{pdfauthor=\authornames}
-    \hypersetup{pdfkeywords=\keywordnames}
-
-    \begin{titlepage}
-        \begin{center}
-
-        %\textsc{\LARGE \univname}\\[1.5cm] % University name
-        %\textsc{\Large \doctype}\\[0.5cm] % Thesis type
-
-       \HRule \\[0.4cm] % Horizontal line
-        {\huge \bfseries \ttitle}\\[0.4cm] % Thesis title
-        \HRule \\[1.5cm] % Horizontal line
-
-		\textsc{\Large \doctype}\\[0.5cm] % Thesis type
-		
-		\large \textit{Submitted in partial fulfillment of the
-        requirements of\\\ccode{} \cname}\\[1cm] % University requirement text
-        
-        \begin{center}
-            \emph{By}\\[0.3cm]
-            \authornames\\
-            ID No. \idnum\\
-            \vspace{1cm}
-            \emph{Under the supervision of:} \\[0.3cm]
-            \supname \\ % The supervisor's name
-            \& \\
-            \cosupname\\[1cm] % The co-supervisor's name
-        \end{center}
-
-        \includegraphics{Figures/bits-logo.pdf} % University/department logo
-       \\[1cm]
-        \UNIVNAME\\
-        {\large \today}\\[4cm] % Date
-        \vfill
-    \end{center}
-
-\end{titlepage}
-}
-% ------------------------------------------------------------------------------
-
 %-------------------------------------------------------------------------------
 % ABSTRACT PAGE DESIGN
 %-------------------------------------------------------------------------------
 \newenvironment{abstract}
 {
-  \btypeout{Abstract Page}
-  \addtotoc{Abstract}
-  \addtocontents{toc}{\vspace{1em}}
-  \thispagestyle{empty}
-  \null\vfil
-  \begin{center}
-    \setlength{\parskip}{0pt}
-    {\normalsize \UNIVNAME \par} % University name in capitals
-    \bigskip
-    {\huge{\textit{Abstract}} \par}
-    \bigskip
-    {\normalsize \degreename\par} % Degree name
-    \bigskip
-    {\normalsize\bf \@title \par} % Thesis title
-    \medskip
-    {\normalsize by \authornames \par} % Author name
-    \bigskip
-  \end{center}
+    \btypeout{Abstract}
+    \addtotoc{Abstract}
+    \addtocontents{toc}{\vspace{1em}}
+    \setstretch{1.3}
+    \thispagestyle{plain}
+    \begin{center}{\huge{\textit{Abstract}} \par}\end{center}
+    \normalsize
 }
-{\clearpage}
+{
+    \vfil\vfil\null
+    \clearpage
+}
 %-------------------------------------------------------------------------------
 
 %-------------------------------------------------------------------------------
@@ -393,12 +254,12 @@ supervision.\\[2.5cm]
 %-------------------------------------------------------------------------------
 \newenvironment{acknowledgements}
 {
-    \btypeout{Acknowledgements}
-    \addtotoc{Acknowledgements}
+    \btypeout{Riconoscimenti}
+    \addtotoc{Riconoscimenti}
     \addtocontents{toc}{\vspace{1em}}
     \setstretch{1.3}
     \thispagestyle{plain}
-    \begin{center}{\huge{\textit{Acknowledgements}} \par}\end{center}
+    \begin{center}{\huge{\textit{Riconoscimenti}} \par}\end{center}
     \normalsize
 }
 {
@@ -428,8 +289,8 @@ supervision.\\[2.5cm]
 \refstepcounter{dummy}
 \addcontentsline{toc}{chapter}{#1}}
 \renewcommand\tableofcontents{
-\btypeout{Table of Contents}
-\addtotoc{Contents}
+\btypeout{Tabella dei Contenuti}
+\addtotoc{Contenuti}
 \begin{spacing}{1}{
     \setlength{\parskip}{1pt}
     \if@twocolumn
@@ -446,8 +307,8 @@ supervision.\\[2.5cm]
 }\end{spacing}
 }
 \renewcommand\listoffigures{
-\btypeout{List of Figures}
-\addtotoc{List of Figures}
+\btypeout{Elenco delle Figure}
+\addtotoc{Elenco delle Figure}
 \begin{spacing}{1}{
     \setlength{\parskip}{1pt}
     \if@twocolumn
@@ -464,8 +325,8 @@ supervision.\\[2.5cm]
 }\end{spacing}
 }
 \renewcommand\listoftables{
-\btypeout{List of Tables}
-\addtotoc{List of Tables}
+\btypeout{Elenco delle Tabelle}
+\addtotoc{Elenco delle Tabelle}
 \begin{spacing}{1}{
     \setlength{\parskip}{1pt}
     \if@twocolumn
@@ -480,33 +341,6 @@ supervision.\\[2.5cm]
     \if@restonecol\twocolumn\fi
     \cleardoublepage
 }\end{spacing}
-}
-\newcommand\listsymbolname{Abbreviations}
-\usepackage{longtable}
-\newcommand\listofsymbols[2]{
-\btypeout{\listsymbolname}
-\addtotoc{\listsymbolname}
-    \chapter*{\listsymbolname
-      \@mkboth{
-          \MakeUppercase\listsymbolname}{\MakeUppercase\listsymbolname}}
-\begin{longtable}[c]{#1}#2\end{longtable}\par
-    \cleardoublepage
-}
-\newcommand\listconstants{Physical Constants}
-\usepackage{longtable}
-\newcommand\listofconstants[2]{
-\btypeout{\listconstants}
-\addtotoc{\listconstants}
-    \chapter*{\listconstants
-      \@mkboth{
-          \MakeUppercase\listconstants}{\MakeUppercase\listconstants}}
-\begin{longtable}[c]{#1}#2\end{longtable}\par
-    \cleardoublepage
-}
-\newcommand\listnomenclature{Nomenclature}
-\newcommand\listofnomenclature[0]{
-\printglossaries
-    \cleardoublepage
 }
 \renewcommand\backmatter{
   \if@openright
