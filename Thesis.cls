@@ -290,7 +290,7 @@
 \addcontentsline{toc}{chapter}{#1}}
 \renewcommand\tableofcontents{
 \btypeout{Tabella dei Contenuti}
-\addtotoc{Contenuti}
+%\addtotoc{Contenuti}
 \begin{spacing}{1}{
     \setlength{\parskip}{1pt}
     \if@twocolumn
