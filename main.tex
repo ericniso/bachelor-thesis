@@ -31,7 +31,31 @@
 \documentclass[11pt, a4paper, oneside]{Thesis} % Paper size, default font size
                                                % and one-sided paper
 
-\graphicspath{{Pictures/}} % Specifies the directory where pictures are stored
+% C++ code highlight
+\lstdefinestyle{custom}{
+    frame=tb,
+    language=C++,
+    aboveskip=3mm,
+    belowskip=3mm,
+    showstringspaces=false,
+    columns=flexible,
+    basicstyle={\small\ttfamily},
+    numbers=none,
+    numberstyle=\tiny\color{gray},
+    otherkeywords={<<<, >>>, __global__},
+    morekeywords=[2]{<<<, >>>},
+    morekeywords=[3]{__global__},
+    keywordstyle=\color{ForestGreen},
+    keywordstyle={[2]\color{red}},
+    keywordstyle={[3]\color{red}},
+    commentstyle=\color{blue},
+    stringstyle=\color{mauve},
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=3
+}{}
+
+\graphicspath{{Figures/}} % Specifies the directory where pictures are stored
 
 \usepackage[backend=bibtex]{biblatex}
 \bibliography{Bibliography.bib}
@@ -81,8 +105,8 @@
 \tableofcontents % Write out the Table of Contents
 
 % Set the left side page header to "List of Figures"
-%\lhead{\emph{List of Figures}}
-%\listoffigures % Write out the List of Figures
+\lhead{\emph{Elenco delle Figure}}
+\listoffigures % Write out the List of Figures
 
 % Set the left side page header to "List of Tables"
 %\lhead{\emph{List of Tables}}
