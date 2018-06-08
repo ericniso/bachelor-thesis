@@ -63,6 +63,11 @@
   \space \number\year}
 
 %-------------------------------------------------------------------------------
+% COLORS
+%-------------------------------------------------------------------------------
+\usepackage[dvipsnames]{xcolor}
+
+%-------------------------------------------------------------------------------
 % LANGUAGES
 %-------------------------------------------------------------------------------
 \usepackage[english,italian]{babel}
@@ -178,6 +183,7 @@
 \usepackage{listings}
 \usepackage{lstpatch}
 \usepackage{microtype}
+\usepackage{float}
 \lstset{captionpos=b,
         frame=tb,
         basicstyle=\scriptsize\ttfamily,
@@ -350,26 +356,3 @@
   \btypeout{\bibname}
   \@mainmatterfalse}
 \endinput
-
-% C++ code highlight
-\lstset{
-  frame=tb,
-  language=C++,
-  aboveskip=3mm,
-  belowskip=3mm,
-  showstringspaces=false,
-  columns=flexible,
-  basicstyle={\small\ttfamily},
-  numbers=none,
-  numberstyle=\tiny\color{gray},
-  keywords=[2]{
-    alignas, global, device, and, and_eq, asm, auto(1), bitand, bitor, bool, break, case, catch, char, char16_t, char32_t, class, compl, const, constexpr, const_cast, continue, decltype, default, delete, do, double, dynamic_cast, else, enum, explicit, export, extern, false, float, for, friend, goto, if, inline, int, long, mutable, namespace, new, noexcept, not, not_eq, nullptr, operator, or, or_eq, private, protected, public, register, reinterpret_cast, return, short, signed, sizeof, static, static_assert, static_cast, struct, switch, template, this, thread_local, throw, true, try, typedef, typeid, typename, union, unsigned, using(1), virtual, void, volatile, wchar_t, while, xor, xor_eqS
-  },
-  keywordstyle=\color{blue},
-  keywordstyle={[2]\color{blue}},
-  commentstyle=\color{dkgreen},
-  stringstyle=\color{mauve},
-  breaklines=true,
-  breakatwhitespace=true,
-  tabsize=3
-}{}
