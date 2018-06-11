@@ -8,9 +8,9 @@ my_kernel()
 // CPU code
 int main()
 {
+    int n_blocks = 8; // Example blocks number
+    int n_threads_per_block = 32; // Example threads per block number
 
     // Invoke Kernel on GPU
-    my_kernel<<<8, 32>>>();
-
-    return 0;
+    my_kernel<<<n_blocks, n_threads_per_block>>>();
 }
