@@ -192,7 +192,7 @@
 \setcounter{nodeidx}{1}
 \newcommand{\nodes}[1]{%
     \foreach \num in {#1}{
-      \node[minimum size=6mm, draw, rectangle] (\arabic{nodeidx}) at (\arabic{nodeidx},0) {\num};
+      \node[minimum size=6mm, draw, rectangle] (\arabic{nodeidx}) at (\arabic{nodeidx},0) {$\num$};
       \stepcounter{nodeidx}
     }
 }

@@ -1,26 +1,256 @@
 \section{Algoritmo parallelo}
 
+La popolazione di cellule è modellata tramite un array, una delle strutture
+dati più adatte ad essere parallelizzate su GPU, dato che è possibile
+demandare la computazione di ogni elemento dell'array ad uno specifico thread.
+Sia la creazione che la simulazione della proliferazione fanno uso solamente di
+array unidimensionali, dunque il problema rimane solamente la stesura di un
+algoritmo in grado di massimizzare il parallelismo per computazione
+dell'insieme di array necessario a portare a termine la simulazione. 
+
 % Descrizione della creazione della popolazione iniziale partendo dal file
 % dell'istogramma di partenza
 \subsection{Creazione della popolazione iniziale}
 
+L'istogramma $H(0)$ che riporta i valori di fluorescenza con la rispettiva
+frequenza è salvato su un file di testo che deve essere letto in modo
+sequenziale. Una volta letto l'intero file avremo creato un array i cui
+elementi saranno le coppie di valori $(\varphi_{i}, \psi_{i})$.
+Ora che è nota la frequenza $\psi_{i}$ per ogni fluorescenza $\varphi_{i}$,
+è possibile invocare l'esecuzione di un \textit{kernel} per ogni coppia di
+valori tale che al kernel vengano assegnati esattamente $\psi_{i}$ thread,
+in modo tale che ognuno di essi si occupi di generare una cellula avente $\varphi_{i}$
+valore di fluorescenza.
+\\
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \pgftransparencygroup
+        \nodes{(\varphi_{i}, \psi_{i})}
+        \endpgftransparencygroup
+        \pgftransparencygroup
+        \hiddennodes{$\longrightarrow$}
+        \endpgftransparencygroup
+        \pgftransparencygroup
+        \nodes{\varphi_{i}, \varphi_{i}}
+        \endpgftransparencygroup
+        \pgftransparencygroup
+        \hiddennodes{., ., .}
+        \endpgftransparencygroup
+        \pgftransparencygroup
+        \nodes{\varphi_{i}, \varphi_{i}}
+        \endpgftransparencygroup
+    \end{tikzpicture}
+    \caption{}
+\end{figure}
+
 % Descrizione dell'avanzamento della simulazione
 \subsection{Simulazione della proliferazione cellulare}
+
+L'idea generale è che dato l'array della popolazione iniziale $X_{0}$
+sia possibile per ogni elemento $X_{0,i}$ in esso contenuto sviluppare
+la simulazione creando due nuove cellule figlie partendo da una cellula
+originaria, ovvero l'elemento selezionato dall'array iniziale.
+\\
+Per la simulazione viene invocato un \textit{kernel} specifico.
+Sia $X_{0,i}$ un elemento dell'array iniziale
+con $i < L$, a cui è associato un certo valore $\varphi_{j}$
+con $j < |\varphi|$ e sia $X_{1}$ un array rappresentante la nuova
+popolazione cellulare.
+Dal \textit{kernel} invocato, per ogni $X_{0,i}$ viene dedicato un GPU thread,
+che svolgerà le seguenti procedure.
+\\
+Le nuove cellule generate dalla proliferazione
+di $X_{0, i}$ saranno $$X_{1, (2 * i)}$$ $$X_{1, (2 * i + 1)}$$
+
+Esse avranno il proprio tempo di vita globale $\tau$
+incrementato secondo la seguente
+$$\tau[X_{1, (2 * i)}] = \tau[X_{0, i}] + \mu[X_{0, i}]$$
+dove $\mu[X_{1, i}]$ indica il tempo dopo il quale la cellula $X_{0,i}$
+procede alla propria divisione.
+\\
+La simulazione prevede un tempo massimo $\tau_{max}$ e una soglia minima
+$\varphi_{min}$ entro il quale procedere
+alla divisione di una cellula, dunque il fenomeno appena descritto avviene
+solamente se $\tau[X_{0, i}] + \mu[X_{0, i}] \leqslant \tau_{max}$ oppure se
+$\varphi[X_{0, i}] / 2 \geqslant \varphi_{min}$.
+Questa restrizione implica che all'interno di $X_{1}$ alcuni elementi non
+vengano computati. Per ovviare a questo inconveniente è stato deciso di
+assegnare ad ogni cellula uno stato locale $\{Alive, Inactive, Remove\}$
+indicatore del fatto che la cellula
+può oppure non può più procedere ulteriormente con la divisione.
+\\
+Sia $\sigma$ l'array degli stati di ogni cellula, allora possiamo riassumere
+l'assegnazione degli stati come segue
+$$\tau[X_{1, (2 * i)}] = \tau[X_{0, i}] + \mu[X_{0, i}] \leqslant \tau_{max}
+\longrightarrow \sigma[X_{1, (2 * i)}] = \sigma[X_{1, (2 * i + 1)}] = Alive$$
+$$\tau[X_{1, (2 * i)}] = \tau[X_{0, i}] + \mu[X_{0, i}] \geqslant \tau_{max}
+\longrightarrow \sigma[X_{1, (2 * i)}] = Inactive \land
+\sigma[X_{1, (2 * i + 1)}] = Remove$$
+$$\varphi[X_{1, (2 * i)}] = \varphi[X_{0, i}] / 2 \leqslant \varphi_{min}
+\longrightarrow \sigma[X_{1, (2 * i)}] = \sigma[X_{1, (2 * i + 1)}] = Remove$$
+
+Una volta che il kernel ha terminato l'esecuzione di tutti i thread, il
+controllo viene ritornato alla CPU.
+Gli stati risultano necessari poichè dopo l'evento di proliferazione cellulare
+dobbiamo procedere all'aggiornamento dei risultati rimuovendo
+da $X_{1}$ le cellule $Inactive$ e aggiungendole ad un nuovo array dei
+risultati $P$.
+Procediamo inoltre all'eliminazione delle cellule con stato $Remove$ in quanto
+possiedono un valore di fluorescenza $\varphi$ sotto la soglia $\varphi_{min}$.
+L'array risultante conterrà solamente cellule $Alive$, dunque possiamo
+utilizzare $X_{1}$ come nuovo array iniziale e reiterare
+il processo appena descritto fino a quando non saranno più presenti cellule
+$Alive$.
+Terminate le iterazioni l'array $P$ conterrà tutte e sole le cellule che hanno
+superato il limite temporale $\tau_{max}$, dunque è possibile calcolare
+l'istogramma dei risultati utilizzando la funzioni definite dalle librerie
+\textit{Thrust}\cite{bell2011thrust} di CUDA e salvare il risultato ottenuto
+su file.
+
+\textbf{!! TODO Ricordarsi di inserire i grafici relativi alla
+prima versione dell'algoritmo}
+
+Come è possibile notare dal grafico, l'aumento delle performance rispetto
+alla versione procedurale dell'algoritmo c'è stato, ma non è ancora degno
+di nota per quanto riguarda i risultati che si vogliono ottenere.
 
 % Spiegazione dei metodi per accelerare la computazione
 \subsection{Acceleranti}
 
+Sebbene la soluzione descritta in precedenza sia corretta, come mostrato nei
+grafici è evidente che bisogna cercare di migliorare ulteriormente
+l'algoritmo in modo da renderlo ancora più performante, in quanto uno
+speedup di \textbf{8x} non è sufficiente per preferire questa soluzione
+rispetto ad una procedurale considerando anche il fattore costo per le moderne
+GPU rispetto alle CPU in commercio.
+È anche da tenere in considerazione il fatto che l'algoritmo si appoggia
+ancora molto sulla CPU quando si tratta di iterare l'array delle soluzioni.
+Detto questo è necessario implementare alcuni \textit{acceleranti} per
+incrementare le perfomance e rendere questa soluzione preferibile rispetto
+all'algoritmo scritto per la CPU.
+
 % Descrizione del parallelismo dinamico
 \paragraph{Parallelismo dinamico}
+
+NVIDIA dalla versione \textit{5.0} di CUDA e su architetture hardware a partire
+dalla versione \textit{sm\_35} ha introdotto la possibilità di invocare
+l'esecuzione di un kernel da un altro kernel.
+Questa pratica è viene definita
+\textit{Parallelismo Dinamico}\cite{jones2012introduction} in quanto permette
+di computare strutture intrinsecamente ricorsive, dato che da un kernel può
+essere invocato lo stesso kernel con parametri differenti come ad 
+esempio l'implementazione del \textit{radix sort}\cite{merrill2011high}.
+\\
+L'idea è utilizzare il parallelismo dinamico per computare non solo il primo
+livello degli alberi di proliferazione cellulare, ma proseguire fino ad arrivare
+all'ultimo livello, ritornando il controllo alla CPU solo in questo caso.
+Per effettuare questa operazione bisogna sfruttare al massimo il concetto di
+\textit{Thread Block} dato che CUDA offre la possibilità di sincronizzare
+tutti i thread appartenenti ad un blocco tramite la primitiva
+\textit{\_\_syncthreads()}\cite{jones2012introduction}.
+L'array $X_{1}$ viene computato da $\ceil*{L/2^{10}}$ \textit{Thread Block},
+invece di terminare la computazione è possibile continuare a computare
+gli array successivi $X_{2}...X_{n}$ a blocchi, ovvero sincronizzare i thread
+all'interno di un \textit{Thread Block} tramite la primitiva
+\textit{\_\_syncthreads()} e in seguito invocare l'esecuzione di un nuovo kernel
+utilizzando però $2$ \textit{Thread Block} dato che il blocco corrente ha
+generato $2 * 2^{10}$ cellule appartenenti al livello successivo dell'albero,
+utilizzando lo stesso algoritmo descritto precedentemente.
+\\
+Questo metodo accelera di molto l'esecuzione dell'algoritmo, ma introduce un
+ulteriore problema: a priori non è possibile conoscere la profondità esatta
+degli alberi di proliferazione, dato che si tratta di una simulazione
+di tipo stocastico, dunque l'utilizzo di memoria aumenta esponenzialmente
+all'aumentare dei livelli di profondità degli alberi.
+\\
+Un altro problema che è sorto è la limitazione hardware del parallelismo
+dinamico, ovvero il fatto che è possibile innestare solamente un massimo
+di \textbf{24 livelli} di ricorsione. Questo fatto ci costringe a dover
+eventualmente terminare la ricorsione e ritornare il controllo alla CPU,
+iterando nuovamente fino a raggiungere il termine della simulazione.
+
+\textbf{!! TODO Ricordarsi di inserire i grafici relativi all'accelerante}
+
+Dal grafico in figura è possibile vedere l'aumento significativo delle
+performance rispetto alla versione che non presenta l'utilizzo del
+parallelismo dinamico. Questo è dovuto al fatto che la sincronizzazione
+di tutti i blocchi delle GPU che deve essere effettuata al termine di ogni
+iterazione è molto onerosa in termini prestazionali, inoltre anche la copia
+dei dati da GPU a CPU per l'aggiornamento dell'array dei risultati risulta
+particolarmente time-consuming.
 
 % Descrizione del metodo di bound
 \paragraph{Bounding}
 
-% Descrizione del metodo di inferenza della profondità dell'albero
-\paragraph{Inferenza dei parametri}
+Sebbene il parallelismo dinamico introduca un enorme vantaggio, porta con sè
+una limitazione importante, ovvero il fatto che un kernel non termina la sua
+esecuzione fino a quando tutti i kernel invocati da quest'ultimo non sono
+anch'essi terminati. Durante la computazione degli alberi questo può portare
+ad alcuni rallentamenti, dato che è inutile computare rami le cui cellule
+sono state marcate come $Inactive$ o $Remove$ dato che non contribuiscono
+alla creazione del nuovo livello di proliferazione.
+Detto questo risulta utile tenere traccia del fatto che un \textit{Thread Block}
+abbia oppure no generato nuove cellule.
+In questo caso ci viene in aiuto la \textit{Shared Memory}\cite{sanders2010cuda}
+, ovvero una zona di memoria condivisa tra tutti i thread appartenenti ad
+uno stesso \textit{Thread Block}. Utilizzando quest'area di memoria è possibile
+settare un flag indicante il fatto che è avvenuto un evento di proliferazione
+cellulare. Se ci trovassimo nel caso in cui nessun evento è avvenuto, sarebbe
+inutile invocare un nuovo kernel, quindi la computazione dei successivi
+sotto-alberi viene interrotta.
 
-% Descrizione del metodo per gestire grandi popolazioni di cellule
-\subsection{Gestione della memoria}
+\textbf{!! TODO Ricordarsi di inserire i grafici relativi all'accelerante}
+
+Il leggero aumento delle prestazioni mostrato in figura indica che la tecnica
+del \textit{bounding} ha poco impatto sull'aumento delle performance, ma
+sicuramente contribuisce alla migliore gestione delle risorse computazionali
+relative alla GPU e all'uso intensivo del parallelismo dinamico.
+
+% Descrizione del metodo di inferenza della profondità dell'albero
+\paragraph{Inferenza del livello di profondità}
+
+Sebbene CUDA ci ponga un livello massimo di nesting pari a $24$ livelli,
+nei modelli presi in considerazione per queste simulazioni, difficilmente
+si supera la soglia dei $5$ eventi di proliferazione per ogni cellula,
+però per come è stato pensato l'utilizzo del parallelismo dinamico vengono
+allocati $N$ livelli pari al numero massimo di cellule che è possibile mantenere
+sulla memoria della GPU, dunque se in memoria centrale è presente sufficiente
+spazio per allocare $10$ livelli di profondità essi vengono allocati,
+consumando più risorse del necessario. Non è nemmeno possibile utilizzare
+la memoria di \textit{swap} dato che le schede non supportano questa
+funzionalità.
+È necessario quindi trovare un modo per inferire nel modo più accurato
+possibile il numero di livelli necessari alla simulazione.
+Un modo banale è quello di dare la possibilità all'utente di specificare il
+numero di livelli da utilizzare durante la simulazione, se è al corrente
+del numero media di divisioni che ogni cellula andrà ad affrontare.
+Un altro modo è quello di inferire il livello utilizzando i parametri forniti
+in ingresso alla simulazione.
+Per poter calcolare i diversi tipi di cellule, si utilizza un array di
+parametri contenente le distribuzioni uniformi $\pi$ dei vari tipi di cellule
+$\tau$ che è possibile avere all'interno della popolazione iniziale.
+Ogni tipo di cellula possiede un tempo medio $\mu$ dopo il quale avviene
+la divisione, il quale segue una distribuzione normale.
+È possibile pensare di utilizzare il tempo medio $\mu_{i}$ del tipo di cellula
+$\tau_{i}$ che ha probabilità $\pi_{i}$ maggiore per calcolare un numero
+approssimativo di livello di divisioni tali per cui venga superato il
+$\tau_{max}$ definito per la simulazione.
+\\
+Sia $\mu_{max}$ il tempo medio di divisione
+del tipo di cellula avente $max(\pi)$.
+Allora possiamo stimare che il numero $\eta$ dei livelli di profondità
+dell'albero è $$\eta : \sum\limits_{i=1}^{\eta - 1}
+\mu_{max} \leqslant \tau_{max} \leqslant \sum\limits_{i=1}^{\eta} \mu_{max}$$
+
+\textbf{!! TODO Ricordarsi di inserire i grafici relativi all'accelerante}
+
+Come è possibile notare dai grafici, l'aumento delle performance utilizzando
+un numero di livelli ad-hoc è notevole dato che la computazione di sotto-alberi
+non è costretta a proseguire oltre il livello inferito, dato che la maggior
+parte delle proliferazioni cellulari è già avvenuta, quindi i
+\textit{Thread Block} non sono costretti ad instanziari altri kernel solamente
+per computare le poche cellule rimaste \textit{Alive}.
 
 % Descrizione della costruzione dell'istogramma finale
-\subsection{Calcolo dell'istogramma finale}
+\paragraph{Calcolo dell'istogramma finale}
