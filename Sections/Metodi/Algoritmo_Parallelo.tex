@@ -336,3 +336,33 @@ per lo svolgimento della simulazione.
 
 % Descrizione del problema della gestione della memoria
 \subsection{Gestione della memoria}
+
+L'implementazione degli acceleranti ha migliorato di gran lunga le
+performance dell'algoritmo, ma ha introdotto un problema, ovvero la crescita
+esponenziale della memoria.
+Infatti data la numerosità $L$ della popolazione iniziale $X_{0}$, essa cresce
+esponenzialmente con il numero dei livelli dell'albero $L * 2^i$ con
+$i \in \N, i > 0$. Inizialmente questa crescita era mitigata dal fatto che
+dopo ogni iterazione la popolazione veniva filtrata, quindi procedendo verso
+il termine della simulazione, l'utilizzo di memoria veniva bilanciato dalla
+poca numerosità delle cellule $Alive$ rimanenti.
+Dopo l'introduzione dell'ultimo accelerante, sebbene le cellule $Inactive$ e
+$Remove$ non vengano prese in considerazione per la computazione, sono
+comunque presenti ancora all'interno delle diverse popolazioni, dato che
+dopo ogni iterazione la memoria non viene più filtrata in quanto non più
+trasferita sulla CPU.
+
+\textbf{!! TODO Ricordarsi di inserire i grafici relativi all'utilizzo
+di memoria}
+
+La crescita esponenziale dell'occupazione di memoria potrebbe essere un
+problema nel momento in cui il tempo $\tau_{max}$ inizia a crescere
+ulteriormente. La soluzione immediata a questo problema potrebbe essere di
+natura economica, ovvero l'acquisto di GPU moderne con molta memoria a
+disposizione. Il problema però persiste, quindi una possibile soluzione
+potrebbe essere quella di computare ad un certo punto solamente un sottoinsieme
+della popolazione e trasferire i restanti elementi sulla CPU, per poi
+elaborarli nuovamente quando il primo sottoinsieme di popolazione è stato
+elaborato. Questo però introdurrebbe nuovamente la necessità di utilizzare
+in modo assiduo $cudaMemcpy()$, però fino ad ora pare essere l'unica soluzione
+plausibile.
