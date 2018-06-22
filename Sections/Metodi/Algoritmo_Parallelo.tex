@@ -111,8 +111,8 @@ su file.
 \textbf{!! TODO Ricordarsi di inserire i grafici relativi alla
 prima versione dell'algoritmo}
 
-Come è possibile notare dal grafico, l'aumento delle performance rispetto
-alla versione procedurale dell'algoritmo c'è stato, ma non è ancora degno
+Come è possibile notare dal grafico, è presente un aumento delle performance
+rispetto alla versione procedurale dell'algoritmo, ma non è ancora degno
 di nota per quanto riguarda i risultati che si vogliono ottenere.
 
 % Spiegazione dei metodi per accelerare la computazione
@@ -134,7 +134,7 @@ all'algoritmo scritto per la CPU.
 \paragraph{Parallelismo dinamico}
 
 NVIDIA dalla versione \textit{5.0} di CUDA e su architetture hardware a partire
-dalla versione \textit{sm\_35} ha introdotto la possibilità di invocare
+dalla versione \textit{compute\_35} ha introdotto la possibilità di invocare
 l'esecuzione di un kernel da un altro kernel.
 Questa pratica è viene definita
 \textit{Parallelismo Dinamico}\cite{jones2012introduction} in quanto permette
@@ -199,6 +199,51 @@ settare un flag indicante il fatto che è avvenuto un evento di proliferazione
 cellulare. Se ci trovassimo nel caso in cui nessun evento è avvenuto, sarebbe
 inutile invocare un nuovo kernel, quindi la computazione dei successivi
 sotto-alberi viene interrotta.
+\\
+Siano $A = Alive$, $I = Inactive$, $R = Remove$, il metodo implementato
+produce i seguenti risultati
+
+\begin{figure}[H]
+\begin{minipage}[b]{.5\linewidth}
+\centering
+\begin{tikzpicture}[level/.style={sibling distance=30mm/#1}]
+    \node [circle, draw] (a) {$A$}
+        child {
+            node [circle,draw] (b) {$I$}
+                child {
+                    node [circle,draw] (d) {$I$}
+                }
+                child {
+                    node [circle,draw] (e) {$R$}
+                }
+        }
+        child {
+            node [circle,draw] (c) {$R$}
+                child {
+                    node [circle,draw] (f) {$R$}
+                }
+                child {
+                    node [circle,draw] (g) {$R$}
+                }
+        };
+\end{tikzpicture}
+\subcaption{Senza bounding}
+\end{minipage}
+\begin{minipage}[b]{.5\linewidth}
+\centering
+\begin{tikzpicture}[level/.style={sibling distance=30mm/#1}]
+    \node [circle, draw] (a) {$A$}
+        child {
+            node [circle,draw] (b) {$I$}
+        }
+        child {
+            node [circle,draw] (c) {$R$}
+        };
+\end{tikzpicture}
+\subcaption{Bounding}
+\end{minipage}
+\caption{}
+\end{figure}
 
 \textbf{!! TODO Ricordarsi di inserire i grafici relativi all'accelerante}
 
@@ -245,12 +290,49 @@ dell'albero è $$\eta : \sum\limits_{i=1}^{\eta - 1}
 
 \textbf{!! TODO Ricordarsi di inserire i grafici relativi all'accelerante}
 
-Come è possibile notare dai grafici, l'aumento delle performance utilizzando
-un numero di livelli ad-hoc è notevole dato che la computazione di sotto-alberi
-non è costretta a proseguire oltre il livello inferito, dato che la maggior
-parte delle proliferazioni cellulari è già avvenuta, quindi i
-\textit{Thread Block} non sono costretti ad instanziari altri kernel solamente
-per computare le poche cellule rimaste \textit{Alive}.
-
 % Descrizione della costruzione dell'istogramma finale
 \paragraph{Calcolo dell'istogramma finale}
+
+Sebbene le performance siano aumentate, il software fa ancora molto affidamento
+sulla CPU per il calcolo dell'istogramma finale.
+Ad ogni iterazione l'array della popolazione $X_{n}$ viene trasferito
+attraverso la CPU in memoria centrale per essere filtrato e per aggiornare i
+risultati dell'istogramma. Questo processo è possibile grazie alla funzione
+\textit{cudaMemcpy()} che si occupa del trasferimento dei dati tra CPU e GPU.
+Diverse chiamate a questa funzione generano un lavoro intensivo che deve essere
+effettuato, quindi impatta ulteriormente sullo speedup della simulazione.
+L'obiettivo è quindi cercare di minimizzare il numero di trasferimenti tramite
+\textit{cudaMemcpy()}.
+\\
+La soluzione risiede nella possibilità di calcolare l'istogramma direttamente
+sulla GPU. Assumendo di conoscere un array ordinato in modo crescente$\Omega$
+contenente tutti possibili valori di fluorescenza
+$\varphi$ che una cellula potrà assumere in futuro, è possibile far eseguire
+ad un thread del kernel (se computando una cellula $Active$ essa non è più in
+grado di proliferare) una ricerca binaria su $\Omega$ e aggiornare
+il valore di frequenza $\psi$ corrispondente alla fluorescenza trovata, tramite
+la funzione $atomicAdd()$ di CUDA, la quale anche se prevede una
+sincronizzazione sulla risorsa a cui si vuole accedere, è necessaria dato che
+ad ora non esiste un altro modo per il calcolo di un istogramma attraverso un
+algoritmo parallelo.
+\\
+Conoscendo l'istogramma iniziale $H(0)$ in realtà abbiamo già a disposizione
+tutti i valori di fluorescenza che una cellula potrà assumere, infatti
+$\Omega$ conterrà tutti i valori di $H(0)$ tali che $\varphi_{i} \geqslant
+\varphi_{min}$ e i successivi valori $\varphi_{i}^{-2j}$ con $j \in \N, j > 0$.
+\\
+Questa tecnica evita il trasferimento dati al termine di ogni iterazione, poichè
+la frequenza riguardante i valori di fluorescenza delle cellule $Inactive$
+è già stata aggiornata durante l'esecuzione del kernel.
+Mediante questa tecnica la $cudaMemcpy()$ viene utilizzata solamente a inizio
+e fine simulazione per il salvataggio dei risultati.
+
+\textbf{!! TODO Ricordarsi di inserire i grafici relativi all'accelerante}
+
+Come si evince dai grafici, questo è l'accelerante che incrementa maggiormente
+lo speedup dell'algoritmo, dato che risolve quasi totalmente il problema
+del bottleneck causato dal trasferimento bidirezionale delle informazioni
+per lo svolgimento della simulazione.
+
+% Descrizione del problema della gestione della memoria
+\subsection{Gestione della memoria}

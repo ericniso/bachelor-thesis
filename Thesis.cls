@@ -186,6 +186,7 @@
 \usepackage{lstpatch}
 \usepackage{microtype}
 \usepackage{float}
+\usepackage{subcaption}
 \usepackage{tikz}
 \usetikzlibrary{calc, arrows}
 \newcounter{nodeidx}
