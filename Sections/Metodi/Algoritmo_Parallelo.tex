@@ -108,8 +108,21 @@ l'istogramma dei risultati utilizzando la funzioni definite dalle librerie
 \textit{Thrust}\cite{bell2011thrust} di CUDA e salvare il risultato ottenuto
 su file.
 
-\textbf{!! TODO Ricordarsi di inserire i grafici relativi alla
-prima versione dell'algoritmo}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[legend pos=outer north east,
+                xtick=data,
+                xlabel={$\tau_{max}$},
+                ylabel={simulation time (s)}
+            ]
+            \addplot table {Data/python.txt};
+            \addplot table {Data/Accelerants/original.txt};
+            \legend{Python,CUDA}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{}
+\end{figure}
 
 Come è possibile notare dal grafico, è presente un aumento delle performance
 rispetto alla versione procedurale dell'algoritmo, ma non è ancora degno
@@ -170,7 +183,21 @@ di \textbf{24 livelli} di ricorsione. Questo fatto ci costringe a dover
 eventualmente terminare la ricorsione e ritornare il controllo alla CPU,
 iterando nuovamente fino a raggiungere il termine della simulazione.
 
-\textbf{!! TODO Ricordarsi di inserire i grafici relativi all'accelerante}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[legend pos=outer north east,
+                xtick=data,
+                xlabel={$\tau_{max}$},
+                ylabel={simulation time (s)}
+            ]
+            \addplot table {Data/Accelerants/original.txt};
+            \addplot table {Data/Accelerants/dynamic_parallelism.txt};
+            \legend{CUDA, Dynamic parallelism}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{}
+\end{figure}
 
 Dal grafico in figura è possibile vedere l'aumento significativo delle
 performance rispetto alla versione che non presenta l'utilizzo del
@@ -245,7 +272,21 @@ produce i seguenti risultati
 \caption{}
 \end{figure}
 
-\textbf{!! TODO Ricordarsi di inserire i grafici relativi all'accelerante}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[legend pos=outer north east,
+                xtick=data,
+                xlabel={$\tau_{max}$},
+                ylabel={simulation time (s)}
+            ]
+            \addplot table {Data/Accelerants/dynamic_parallelism.txt};
+            \addplot table {Data/Accelerants/bounding.txt};
+            \legend{Dynamic parallelism, Bounding}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{}
+\end{figure}
 
 Il leggero aumento delle prestazioni mostrato in figura indica che la tecnica
 del \textit{bounding} ha poco impatto sull'aumento delle performance, ma
@@ -288,7 +329,21 @@ Allora possiamo stimare che il numero $\eta$ dei livelli di profondità
 dell'albero è $$\eta : \sum\limits_{i=1}^{\eta - 1}
 \mu_{max} \leqslant \tau_{max} \leqslant \sum\limits_{i=1}^{\eta} \mu_{max}$$
 
-\textbf{!! TODO Ricordarsi di inserire i grafici relativi all'accelerante}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[legend pos=outer north east,
+                xtick=data,
+                xlabel={$\tau_{max}$},
+                ylabel={simulation time (s)}
+            ]
+            \addplot table {Data/Accelerants/bounding.txt};
+            \addplot table {Data/Accelerants/inference.txt};
+            \legend{Bounding, Inference}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{}
+\end{figure}
 
 % Descrizione della costruzione dell'istogramma finale
 \paragraph{Calcolo dell'istogramma finale}
@@ -327,7 +382,21 @@ la frequenza riguardante i valori di fluorescenza delle cellule $Inactive$
 Mediante questa tecnica la $cudaMemcpy()$ viene utilizzata solamente a inizio
 e fine simulazione per il salvataggio dei risultati.
 
-\textbf{!! TODO Ricordarsi di inserire i grafici relativi all'accelerante}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[legend pos=outer north east,
+                xtick=data,
+                xlabel={$\tau_{max}$},
+                ylabel={simulation time (s)}
+            ]
+            \addplot table {Data/Accelerants/inference.txt};
+            \addplot table {Data/Accelerants/histogram.txt};
+            \legend{Inference, Histogram}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{}
+\end{figure}
 
 Come si evince dai grafici, questo è l'accelerante che incrementa maggiormente
 lo speedup dell'algoritmo, dato che risolve quasi totalmente il problema
@@ -352,8 +421,21 @@ comunque presenti ancora all'interno delle diverse popolazioni, dato che
 dopo ogni iterazione la memoria non viene più filtrata in quanto non più
 trasferita sulla CPU.
 
-\textbf{!! TODO Ricordarsi di inserire i grafici relativi all'utilizzo
-di memoria}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[legend pos=north west,
+                xtick=data,
+                xlabel={iterations},
+                ylabel={final population size (MB)}
+            ]
+            \addplot table {Data/Memory/original.txt};
+            \addplot table {Data/Memory/histogram.txt};
+            \legend{Serial histogram,Parallel histogram}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{}
+\end{figure}
 
 La crescita esponenziale dell'occupazione di memoria potrebbe essere un
 problema nel momento in cui il tempo $\tau_{max}$ inizia a crescere

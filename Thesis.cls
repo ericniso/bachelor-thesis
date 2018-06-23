@@ -187,6 +187,7 @@
 \usepackage{microtype}
 \usepackage{float}
 \usepackage{subcaption}
+\usepackage{pgfplots}
 \usepackage{tikz}
 \usetikzlibrary{calc, arrows}
 \newcounter{nodeidx}
