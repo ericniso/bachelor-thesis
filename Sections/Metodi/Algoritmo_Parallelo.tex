@@ -168,8 +168,81 @@ gli array successivi $X_{2}...X_{n}$ a blocchi, ovvero sincronizzare i thread
 all'interno di un \textit{Thread Block} tramite la primitiva
 \textit{\_\_syncthreads()} e in seguito invocare l'esecuzione di un nuovo kernel
 utilizzando però $2$ \textit{Thread Block} dato che il blocco corrente ha
-generato $2 * 2^{10}$ cellule appartenenti al livello successivo dell'albero,
-utilizzando lo stesso algoritmo descritto precedentemente.
+generato $2 * 2^{10}$ cellule appartenenti al livello successivo dell'albero.
+\\
+\begin{figure}[H]
+    \begin{minipage}[b]{.5\linewidth}
+    \centering
+    \begin{tikzpicture}[level/.style={sibling distance=30mm/#1}]
+        \node [circle, draw] (a) {$0$}
+            child {
+                node [circle,draw] (b) {$0$}
+                    child {
+                        node [circle,draw] (d) {$0$}
+                    }
+                    child {
+                        node [circle,draw] (e) {$1$}
+                    }
+            }
+            child {
+                node [circle,draw] (c) {$1$}
+                    child {
+                        node [circle,draw] (f) {$2$}
+                    }
+                    child {
+                        node [circle,draw] (g) {$3$}
+                    }
+            };
+    \end{tikzpicture}
+    \end{minipage}
+    \begin{minipage}[b]{.5\linewidth}
+    \centering
+    \begin{tikzpicture}[level/.style={sibling distance=30mm/#1}]
+        \node [circle, draw] (a) {$1$}
+            child {
+                node [circle,draw] (b) {$2$}
+                    child {
+                        node [circle,draw] (d) {$4$}
+                    }
+                    child {
+                        node [circle,draw] (e) {$5$}
+                    }
+            }
+            child {
+                node [circle,draw] (c) {$3$}
+                    child {
+                        node [circle,draw] (f) {$6$}
+                    }
+                    child {
+                        node [circle,draw] (g) {$7$}
+                    }
+            };
+    \end{tikzpicture}
+    \end{minipage}
+    \caption{}
+\end{figure}
+
+In figura possiamo vedere due alberi di proliferazione, dove ogni nodo
+rappresenta l'indice di una cellula all'interno dell'array della popolazione
+corrispondente al livello degli alberi considerato, come segue:
+
+\begin{itemize}
+    \item $X_{0} = [0, 1]$
+    \item $X_{1} = [0, 1, 2, 3]$
+    \item $X_{2} = [0, 1, 2, 3, 4, 5, 6, 7]$    
+\end{itemize}
+
+Denotiamo con $B_{i,j}$ un generico \textit{Thread Block} dove
+$i$ rappresenta la popolazione $X_{i}$, mentre $j$ l'indice del blocco.
+Quindi $B_{0,0} = [0, 1]$ sarà il blocco che date le
+cellule $[0, 1] \subseteq X_{0}$ si occupa di
+computare le figlie risultanti dalla divisione, ovvero
+$[0, 1, 2, 3] \subseteq X_{1}$.
+Al termine della computazione di $B_{0,0}$, viene invocata la primitiva 
+\textit{\_\_syncthreads()} ed eseguito un nuovo kernel, che istanzierà
+i blocchi $B_{1,0} = [0, 1]$ e $B_{1,1} = [2, 3]$, che a loro volta
+eseguiranno $B_{2,0} = [0, 1]$, $B_{2,1} = [2, 3]$,
+$B_{2,2} = [4, 5]$ e $B_{2,3} = [6, 7]$.
 \\
 Questo metodo accelera di molto l'esecuzione dell'algoritmo, ma introduce un
 ulteriore problema: a priori non è possibile conoscere la profondità esatta
