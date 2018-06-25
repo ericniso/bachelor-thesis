@@ -116,8 +116,8 @@ su file.
                 xlabel={$\tau_{max}$},
                 ylabel={simulation time (s)}
             ]
-            \addplot table {Data/python.txt};
-            \addplot table {Data/Accelerants/original.txt};
+            \addplot table[x=Time, y=Python] {Data/Accelerants/fit.txt};
+            \addplot table[x=Time, y=Original] {Data/Accelerants/fit.txt};
             \legend{Python,CUDA}
         \end{axis}
     \end{tikzpicture}
@@ -264,8 +264,8 @@ iterando nuovamente fino a raggiungere il termine della simulazione.
                 xlabel={$\tau_{max}$},
                 ylabel={simulation time (s)}
             ]
-            \addplot table {Data/Accelerants/original.txt};
-            \addplot table {Data/Accelerants/dynamic_parallelism.txt};
+            \addplot table[x=Time, y=Original] {Data/Accelerants/fit.txt};
+            \addplot table[x=Time, y=Dynamic] {Data/Accelerants/fit.txt};
             \legend{CUDA, Dynamic parallelism}
         \end{axis}
     \end{tikzpicture}
@@ -353,8 +353,8 @@ produce i seguenti risultati
                 xlabel={$\tau_{max}$},
                 ylabel={simulation time (s)}
             ]
-            \addplot table {Data/Accelerants/dynamic_parallelism.txt};
-            \addplot table {Data/Accelerants/bounding.txt};
+            \addplot table[x=Time, y=Dynamic] {Data/Accelerants/fit.txt};
+            \addplot table[x=Time, y=Bounding] {Data/Accelerants/fit.txt};
             \legend{Dynamic parallelism, Bounding}
         \end{axis}
     \end{tikzpicture}
@@ -410,8 +410,8 @@ dell'albero è $$\eta : \sum\limits_{i=1}^{\eta - 1}
                 xlabel={$\tau_{max}$},
                 ylabel={simulation time (s)}
             ]
-            \addplot table {Data/Accelerants/bounding.txt};
-            \addplot table {Data/Accelerants/inference.txt};
+            \addplot table[x=Time, y=Bounding] {Data/Accelerants/fit.txt};
+            \addplot table[x=Time, y=Inference] {Data/Accelerants/fit.txt};
             \legend{Bounding, Inference}
         \end{axis}
     \end{tikzpicture}
@@ -463,8 +463,8 @@ e fine simulazione per il salvataggio dei risultati.
                 xlabel={$\tau_{max}$},
                 ylabel={simulation time (s)}
             ]
-            \addplot table {Data/Accelerants/inference.txt};
-            \addplot table {Data/Accelerants/histogram.txt};
+            \addplot table[x=Time, y=Inference] {Data/Accelerants/fit.txt};
+            \addplot table[x=Time, y=Histogram] {Data/Accelerants/fit.txt};
             \legend{Inference, Histogram}
         \end{axis}
     \end{tikzpicture}
@@ -502,8 +502,8 @@ trasferita sulla CPU.
                 xlabel={iterations},
                 ylabel={final population size (MB)}
             ]
-            \addplot table {Data/Memory/original.txt};
-            \addplot table {Data/Memory/histogram.txt};
+            \addplot table[x=Iteration, y=Serial] {Data/Memory/validation.txt};
+            \addplot table[x=Iteration, y=Parallel] {Data/Memory/validation.txt};
             \legend{Serial histogram,Parallel histogram}
         \end{axis}
     \end{tikzpicture}

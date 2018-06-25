@@ -18,8 +18,8 @@ modificando il parametro $\tau_{max}$.
                     xlabel={$\tau_{max}$},
                     ylabel={simulation time (s)}
                 ]
-                \addplot table {Data/Comparison/fit_python.txt};
-                \addplot table {Data/Comparison/fit_tesla_k80.txt};
+                \addplot table[x=Time, y=Python] {Data/Comparison/fit.txt};
+                \addplot table[x=Time, y=K80] {Data/Comparison/fit.txt};
                 \legend{Python,Tesla K80}
             \end{axis}
         \end{tikzpicture}
@@ -37,8 +37,8 @@ modificando il parametro $\tau_{max}$.
                     xlabel={$\tau_{max}$},
                     ylabel={simulation time (s)}
                 ]
-                \addplot table {Data/Comparison/validation_python.txt};
-                \addplot table {Data/Comparison/validation_gtx_970.txt};
+                \addplot table[x=Time, y=Python] {Data/Comparison/validation.txt};
+                \addplot table[x=Time, y=970] {Data/Comparison/validation.txt};
                 \legend{Python,GTX 970}
             \end{axis}
         \end{tikzpicture}
@@ -67,7 +67,7 @@ seguente grafico
                 nodes near coords,
                 nodes near coords align={vertical},
             ]
-            \addplot table {Data/Speedup/fit_tesla_k80.txt};
+            \addplot table[x=Time, y=K80] {Data/Speedup/fit.txt};
             \legend{Tesla K80}
             \end{axis}
         \end{tikzpicture}
@@ -89,8 +89,8 @@ seguente grafico
                 nodes near coords,
                 nodes near coords align={vertical},
             ]
-            \addplot table {Data/Speedup/validation_tesla_k80.txt};
-            \addplot table {Data/Speedup/validation_gtx_970.txt};
+            \addplot table[x=Time, y=K80] {Data/Speedup/validation.txt};
+            \addplot table[x=Time, y=970] {Data/Speedup/validation.txt};
             \legend{Tesla K80, GTX 970}
             \end{axis}
         \end{tikzpicture}
