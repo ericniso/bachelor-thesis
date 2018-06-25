@@ -60,17 +60,14 @@ seguente grafico
                 ybar,
                 enlargelimits=0.15,
                 legend style={at={(0.5,-0.20)},
-                anchor=north,legend columns=-1},
+                    anchor=north,legend columns=-1},
                 ylabel={speedup},
                 xlabel={$\tau_{max}$},
-                symbolic x coords={240,480,720, 960, 1200},
                 xtick=data,
                 nodes near coords,
                 nodes near coords align={vertical},
             ]
-            \addplot coordinates {
-                (240, 12) (480, 72) (720, 109) (960, 115) (1200, 115)
-            };
+            \addplot table {Data/Speedup/fit_tesla_k80.txt};
             \legend{Tesla K80}
             \end{axis}
         \end{tikzpicture}
@@ -85,20 +82,15 @@ seguente grafico
                 ybar,
                 enlargelimits=0.15,
                 legend style={at={(0.5,-0.20)},
-                anchor=north,legend columns=-1},
+                    anchor=north,legend columns=-1},
                 ylabel={speedup},
                 xlabel={$\tau_{max}$},
-                symbolic x coords={240,480,720, 960, 1200},
                 xtick=data,
                 nodes near coords,
                 nodes near coords align={vertical},
             ]
-            \addplot coordinates {
-                (240, 5) (480, 14) (720, 18) (960, 19) (1200, 19)
-            };
-            \addplot coordinates {
-                (240, 10) (480, 34) (720, 43) (960, 44) (1200, 45)
-            };
+            \addplot table {Data/Speedup/validation_tesla_k80.txt};
+            \addplot table {Data/Speedup/validation_gtx_970.txt};
             \legend{Tesla K80, GTX 970}
             \end{axis}
         \end{tikzpicture}
