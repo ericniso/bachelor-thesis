@@ -234,15 +234,15 @@ corrispondente al livello degli alberi considerato, come segue:
 
 Denotiamo con $B_{i,j}$ un generico \textit{Thread Block} dove
 $i$ rappresenta la popolazione $X_{i}$, mentre $j$ l'indice del blocco.
-Quindi $B_{0,0} = [0, 1]$ sarà il blocco che date le
-cellule $[0, 1] \subseteq X_{0}$ si occupa di
+Quindi $B_{0,0} = \{0, 1\}$ sarà il blocco che date le
+cellule $\{0, 1\} \subseteq X_{0}$ si occupa di
 computare le figlie risultanti dalla divisione, ovvero
-$[0, 1, 2, 3] \subseteq X_{1}$.
+$\{0, 1, 2, 3\} \subseteq X_{1}$.
 Al termine della computazione di $B_{0,0}$, viene invocata la primitiva 
 \textit{\_\_syncthreads()} ed eseguito un nuovo kernel, che istanzierà
-i blocchi $B_{1,0} = [0, 1]$ e $B_{1,1} = [2, 3]$, che a loro volta
-eseguiranno $B_{2,0} = [0, 1]$, $B_{2,1} = [2, 3]$,
-$B_{2,2} = [4, 5]$ e $B_{2,3} = [6, 7]$.
+i blocchi $B_{1,0} = \{0, 1\}$ e $B_{1,1} = \{2, 3\}$, che a loro volta
+eseguiranno $B_{2,0} = \{0, 1\}$, $B_{2,1} = \{2, 3\}$,
+$B_{2,2} = \{4, 5\}$ e $B_{2,3} = \{6, 7\}$.
 \\
 Questo metodo accelera di molto l'esecuzione dell'algoritmo, ma introduce un
 ulteriore problema: a priori non è possibile conoscere la profondità esatta
@@ -345,6 +345,10 @@ produce i seguenti risultati
 \caption{}
 \end{figure}
 
+Come è possibile notare, l'albero risultante dall'applicazione del
+\textit{bounding} presenta meno nodi, ciò equivale al fatto di risparmiare
+risorse evitando la computazione di sottoalberi. 
+\\
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
