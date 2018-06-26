@@ -364,7 +364,12 @@ produce i seguenti risultati
 Il leggero aumento delle prestazioni mostrato in figura indica che la tecnica
 del \textit{bounding} ha poco impatto sull'aumento delle performance, ma
 sicuramente contribuisce alla migliore gestione delle risorse computazionali
-relative alla GPU e all'uso intensivo del parallelismo dinamico.
+relative alla GPU e all'uso intensivo del parallelismo dinamico. Infatti
+quando un kernel \textit{padre} invoca un kernel \textit{figlio},
+il \textit{padre} dovrà attendere la fine di tutti i suoi kernel figli per
+poter procedere con l'esecuzione del codice e terminare a sua volta.
+Questa tecnica di bounding risulterà molto più utile in seguito, con
+l'implementazione dell'ultimo accelerante.
 
 % Descrizione del metodo di inferenza della profondità dell'albero
 \paragraph{Inferenza del livello di profondità}
@@ -417,6 +422,13 @@ dell'albero è $$\eta : \sum\limits_{i=1}^{\eta - 1}
     \end{tikzpicture}
     \caption{}
 \end{figure}
+
+Nel grafico possiamo notare un maggiore incremento di prestazioni fino
+ad un valore di $\tau_{max}$ di $720$, questo perchè sebbene venga applicata
+l'inferenza dei parametri, l'algoritmo prevede l'istanziamento di $\eta$
+livelli solamente se è disponibile abbastanza memoria all'interno della GPU.
+Quindi risulta sicuramente un vantaggio l'utilizzo di GPU con molta memoria
+dedicata a disposizione.
 
 % Descrizione della costruzione dell'istogramma finale
 \paragraph{Calcolo dell'istogramma finale}
