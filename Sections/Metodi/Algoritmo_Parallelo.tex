@@ -58,7 +58,9 @@ con $i < L$, a cui è associato un certo valore $\varphi_{j}$
 con $j < |\varphi|$ e sia $X_{1}$ un array rappresentante la nuova
 popolazione cellulare.
 Dal \textit{kernel} invocato, per ogni $X_{0,i}$ viene dedicato un GPU thread,
-che svolgerà le seguenti procedure.
+che si occuperà di creare due nuove cellule con fluorescenza dimezzata
+rispetto alla fluorescenza della cellula padre e genererà
+il nuovo timer delle cellule sulla base del tipo di cellula considerata.
 \\
 Le nuove cellule generate dalla proliferazione
 di $X_{0, i}$ saranno $$X_{1, (2 * i)}$$ $$X_{1, (2 * i + 1)}$$
