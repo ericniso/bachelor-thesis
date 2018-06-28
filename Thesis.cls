@@ -186,7 +186,8 @@
 \usepackage{lstpatch}
 \usepackage{microtype}
 \usepackage{float}
-\usepackage{subcaption}
+\usepackage[font=footnotesize]{subcaption}
+\captionsetup{font=footnotesize}
 \usepackage{pgfplots}
 \usepackage{tikz}
 \usetikzlibrary{calc, arrows}

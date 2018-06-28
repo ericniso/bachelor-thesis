@@ -1,37 +1,119 @@
 \section{Confronto CUDA/Python}
 
-Lo scopo della simulazione è verificare la correttezza del modello utilizzato
-sulla base di dati reali provenienti da esperimenti effettuati in vivo.
-Di seguito una comparazione dei risultati ottenuti dalle simulazioni fra
-l'algoritmo di riferimento sviluppato in Python e la versione implementata
-tramite CUDA.
-
 \begin{figure}[H]
     \begin{minipage}[b]{.5\linewidth}
         \centering
-        \includegraphics[scale=0.3]{fit_cuda_cpu_comparison}
-        \subcaption{Fitting $\varphi_{min}=11.0, \tau_{max}=240$}
+        \scalebox{0.65}{
+        \pgfplotsset{scaled y ticks=false}
+        \begin{tikzpicture}
+            \begin{axis}[
+                xmode=log,
+                area style,
+                ylabel={frequenza cellule},
+                xlabel={valori di fluorescenza}
+                ]
+            \addplot+[ybar interval,mark=no] table {Data/Final/fit_cuda.txt};
+            \addplot+[ybar interval,mark=no] table {Data/Final/fit_cpu.txt};
+            \legend{CUDA, Python}
+        \end{axis}
+        \end{tikzpicture}
+        }
+        \subcaption{Confronto simulazioni Python e CUDA con
+        \\
+        $\varphi_{min}=11.0, \tau_{max}=240$}
     \end{minipage}
     \begin{minipage}[b]{.5\linewidth}
         \centering
-        \includegraphics[scale=0.3]{validation_cuda_cpu_comparison}
-        \subcaption{Validation $\varphi_{min}=8.7, \tau_{max}=504$}
+        \scalebox{0.65}{
+        \pgfplotsset{scaled y ticks=false}
+        \begin{tikzpicture}
+            \begin{axis}[
+                xmode=log,
+                area style,
+                ylabel={frequenza cellule},
+                xlabel={valori di fluorescenza}
+                ]
+            \addplot+[ybar interval,mark=no] table
+                {Data/Final/validation_cuda.txt};
+            \addplot+[ybar interval,mark=no] table
+                {Data/Final/validation_cpu.txt};
+                \legend{CUDA, Python}
+        \end{axis}
+        \end{tikzpicture}
+        }
+        \subcaption{Confronto simulazioni Python e CUDA con
+        \\
+        $\varphi_{min}=8.7, \tau_{max}=504$}
     \end{minipage}
     \begin{minipage}[b]{.5\linewidth}
+        \vspace{0.3cm}
         \centering
-        \includegraphics[scale=0.3]{fit_cuda_target_comparison}
-        \subcaption{Fitting $\varphi_{min}=11.0, \tau_{max}=240$}
+        \scalebox{0.65}{
+        \pgfplotsset{scaled y ticks=false}
+        \begin{tikzpicture}
+            \begin{axis}[
+                xmode=log,
+                area style,
+                ylabel={frequenza cellule},
+                xlabel={valori di fluorescenza}
+                ]
+            \addplot+[ybar interval,mark=no] table {Data/Final/fit_cuda.txt};
+            \addplot+[ybar interval,mark=no] table {Data/Final/fit_target.txt};
+            \legend{CUDA, Laboratorio}
+        \end{axis}
+        \end{tikzpicture}
+        }
+        \subcaption{Confronto simulazione CUDA con
+        \\
+        $\varphi_{min}=11.0, \tau_{max}=240$
+        \\
+        e dati sperimentali}
     \end{minipage}
     \begin{minipage}[b]{.5\linewidth}
+        \vspace{0.3cm}
         \centering
-        \includegraphics[scale=0.3]{validation_cuda_target_comparison}
-        \subcaption{Validation $\varphi_{min}=8.7, \tau_{max}=504$}
+        \scalebox{0.65}{
+        \pgfplotsset{scaled y ticks=false}
+        \begin{tikzpicture}
+            \begin{axis}[
+                xmode=log,
+                area style,
+                ylabel={frequenza cellule},
+                xlabel={valori di fluorescenza}
+                ]
+            \addplot+[ybar interval,mark=no] table
+                {Data/Final/validation_cuda.txt};
+            \addplot+[ybar interval,mark=no] table
+                {Data/Final/validation_target.txt};
+            \legend{CUDA, Laboratorio}
+        \end{axis}
+        \end{tikzpicture}
+        }
+        \subcaption{Confronto simulazione CUDA con
+        \\
+        $\varphi_{min}=8.7, \tau_{max}=504$
+        \\
+        e dati sperimentali}
     \end{minipage}
-    \caption{}
+    \caption{Confronto dei valori di fluorescenza sperimentali ricavati in laboratorio e
+    quelli ottenuti dalle simulazioni utilizzando
+    l'algoritmo sviluppato in Python e in CUDA con diversi parametri
+    iniziali}
+    \label{chart:comparison}
 \end{figure}
 
-Come è possibile notare dai grafici in figura, sono presenti aree in cui
-i valori di frequenza si discostano tra loro di poche unità. Questa variazione
+Lo scopo della simulazione è verificare la correttezza del modello utilizzato
+sulla base di dati reali provenienti da esperimenti effettuati in vivo
+in laboratorio.
+Di seguito una comparazione dei risultati ottenuti dalle simulazioni fra
+l'algoritmo di riferimento sviluppato in Python e la versione implementata
+tramite CUDA.
+\\
+In figura \ref{chart:comparison} è possibile vedere la comparazione dei
+risultati ottenuti dalle simulatzioni fra l'algoritmo di riferimento sviluppato
+in Python e la versione implementata in CUDA.
+Nei grafici sono presenti aree in cui
+i valori di frequenza si discostano tra loro alcune unità. Questa variazione
 è dovuta al fatto che la simulazione deve elaborare eventi di tipo stocastico,
 dunque il numero di cellule aventi un determinato tipo e il timer di divisione
 non saranno mai esattamente uguali per ogni simulazione che si andrà ad

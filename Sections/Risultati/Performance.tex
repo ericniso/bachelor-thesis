@@ -2,7 +2,7 @@
 
 L'implementazione di un modello ad albero per la parallelizzazione di eventi
 di proliferazione cellulare si è rivelata una tecnica efficiente per questo
-tipo di problema, di seguito in figura ritroviamo i risultati ottenuti per
+tipo di simulazione, di seguito in figura sono presenti i risultati ottenuti per
 quanto riguarda i tempi necessari alla computazione della simulazione
 modificando il parametro $\tau_{max}$.
 \\
@@ -16,7 +16,7 @@ modificando il parametro $\tau_{max}$.
                     ymode=log,
                     log ticks with fixed point,
                     xlabel={$\tau_{max}$},
-                    ylabel={simulation time (s)}
+                    ylabel={tempo simulazione (s)}
                 ]
                 \addplot table[x=Time, y=Python] {Data/Comparison/fit.txt};
                 \addplot table[x=Time, y=K80] {Data/Comparison/fit.txt};
@@ -24,7 +24,7 @@ modificando il parametro $\tau_{max}$.
             \end{axis}
         \end{tikzpicture}
         }
-        \subcaption{Fitting $\varphi_{min}=11.0$}
+        \subcaption{$\varphi_{min}=11.0$}
     \end{minipage}
     \begin{minipage}[b]{.5\linewidth}
         \centering
@@ -35,7 +35,7 @@ modificando il parametro $\tau_{max}$.
                     ymode=log,
                     log ticks with fixed point,
                     xlabel={$\tau_{max}$},
-                    ylabel={simulation time (s)}
+                    ylabel={tempo simulazione (s)}
                 ]
                 \addplot table[x=Time, y=Python] {Data/Comparison/validation.txt};
                 \addplot table[x=Time, y=970] {Data/Comparison/validation.txt};
@@ -43,9 +43,13 @@ modificando il parametro $\tau_{max}$.
             \end{axis}
         \end{tikzpicture}
         }
-        \subcaption{Validation $\varphi_{min}=8.7$}
+        \subcaption{$\varphi_{min}=8.7$}
     \end{minipage}
-    \caption{}
+    \caption{Confronto dei tempi (in secondi) necessari per il termine
+    della simulazione fra l'algoritmo sviluppato in Python
+    e in CUDA utilizzando GPU diverse con diverso parametri iniziale
+    $\varphi_{min}$ per la simulazione, aumentando il tempo massimo
+    $\tau_{max}$ per la proliferazione cellulare}
 \end{figure}
 
 Un'idea ancora più generale riguardo allo speedup guadagnato è fornita dal
@@ -72,7 +76,9 @@ seguente grafico
             \end{axis}
         \end{tikzpicture}
         }
-        \subcaption{Fitting $\varphi_{min}=11.0$}
+        \subcaption{Speedup della simulazione con valore iniziale
+            \\
+            $\varphi_{min}=11.0$ e differenti valori di $\tau_{max}$}
     \end{minipage}
     \begin{minipage}[b]{.5\linewidth}
         \centering
@@ -95,12 +101,17 @@ seguente grafico
             \end{axis}
         \end{tikzpicture}
         }
-        \subcaption{Validation $\varphi_{min}=8.7$}
+        \subcaption{Speedup della simulazione con valore iniziale
+            \\
+            $\varphi_{min}=8.7$ e differenti valori di $\tau_{max}$}
     \end{minipage}
-    \caption{}
+    \caption{Confronto dello speedup ottenuto tramite l'algoritmo implementato
+        in CUDA rispetto alla versione non parallela in Python ed
+        eseguito su GPU con caratteristiche hardware differenti fra loro}
+    \label{chart:speedup}
 \end{figure}
 
-Come è possibile notare per quanto riguarda la \textit{validazione}, la scheda
+Come è possibile notare dal grafico \ref{chart:speedup} la scheda
 GTX 970 è più performante della Tesla K80. Questo è dato dal fatto che
 la GTX 970 possiede un clock di 1050 MHz, mentre la Tesla K80 solamente di
 562 MHz, dunque frequenza quasi dimezzata. Questo impatta leggermente sulle
