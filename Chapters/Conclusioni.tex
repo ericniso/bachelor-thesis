@@ -7,3 +7,26 @@
 \lhead{\emph{Conclusioni}} % This is for the header on each page - perhaps a shortened title
 
 %----------------------------------------------------------------------------------------
+
+I risultati ottenuti dalle simulazioni effettuate mediante
+l'utilizzo dell'algoritmo implementato in CUDA messi a confronto con i
+risultati del medesimo algoritmo codificato in Python hanno confermato
+la correttezza dell'algoritmo CUDA, dato che utilizza una struttura dati
+ad albero per l'elaborazione della simulazione, differentemente dalla versione
+Python che fa uso di una struttura a stack, più intuitiva da implementare e
+gestire. La scelta di questo tipo di strutture ad albero ha portato un enorme
+vantaggio in termini prestazionali, poiché è stato scelto di implementare
+una soluzione che prevedesse l'utilizzo del parallelismo dinamico per
+verificare la validità di questa metodologia nella simulazione di fenomeni
+intrinsecamente ricorsivi. Il parallelismo dinamico con molti livelli
+di profondità risulta quindi un'ottima soluzione quando si tratta di elaborare
+strutture dati predisposte alla ricorsione, come in questo caso. Sebbene CUDA
+preveda un limite fisico al numero di livelli di ricorsione disponibili, è
+degna di nota l'accelerazione fornita alla simulazione.
+L'aumento delle performance è evidente anche utilizzando i dati di test
+forniti, ma sarebbe interessante vedere a confronto il comportamento
+dell'algoritmo parallelo con quello sequenziale a fronte di una popolazione
+iniziale $X_{0}$ con numerosità di gran lunga più elevata, e a fronte
+di un tempo massimo di proliferazione $\tau_{max}$ molto distante.
+Gli sviluppi futuri prevedono l'ottimizzazione dell'utilizzo della memoria
+a fronte della crescita esponenziale della popolazione cellulare.
