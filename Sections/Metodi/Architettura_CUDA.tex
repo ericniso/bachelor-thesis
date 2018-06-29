@@ -1,10 +1,11 @@
 \section{Architettura CUDA}
 
-CUDA è l'architettura di elaborazione parallela progettata e sviluppata da
-NVIDIA che sfrutta la potenza di calcolo delle GPU (Graphics Processing Units)
+CUDA è l'architettura di elaborazione parallela, basata sul paradigma SIMD,
+progettata e sviluppata da NVIDIA che sfrutta la potenza di calcolo delle GPU 
+(Graphics Processing Units)
 per aumentare le prestazioni di alcuni tipi di software.
-L'elaborazione sta lentamente migrando verso il paradigma di
-\textit{co-processing} su CPU e GPU il quale prevede che l'esecuzione della
+L'elaborazione sta lentamente migrando verso il paradigma di 
+co-processing su CPU e GPU il quale prevede che l'esecuzione della
 gran parte del carico computazionale venga demandata alla GPU, e i risultati
 presi nuovamente in carico dalla CPU.
 \\
@@ -59,8 +60,8 @@ Il modello astratto definisce tre tipologie di oggetti:
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{cuda_astraction}
-    \caption{Schema della gerarchia di Thread, Thread block, e
-        \textit{Grid} \cite[p.~59]{nickolls2010gpu}}
+    \caption{Schema della gerarchia di Thread, Thread block, e Grid 
+        \cite{nickolls2010gpu}}
 \end{figure}
 
 Le procedure che vengono eseguite sulla GPU vengono chiamate Kernel
@@ -108,3 +109,43 @@ Thread con $\gamma < \Gamma, \beta < B, \tau < T$.
             l'esecuzione di un Kernel},
     style=custom]
     {Code/thread_id.c}
+
+\paragraph{Gerarchie di memoria}\mbox{}
+\\
+Attraverso l'astrazione software CUDA mette a disposizione tre diverse
+tipologie di memorie\cite{kirk2007nvidia}:
+
+\begin{itemize}
+    \item Registri: rappresentano la memoria privata di ogni singolo Thread,
+        sono estremamente veloci dato che risiedono all'interno del chip.
+        Vengono utilizzati per memorizzare le
+        variabili locali dichiarate all'interno di un Thread.
+    
+    \item Memoria condivisa: la velocità di accesso è pressochè simile a quella
+        dei registri poichè anch'essa è presente all'interno del chip,
+        con l'unica differenza che questa porzione di memoria
+        è accessibile da tutti i Thread appartenenti ad uno stesso Thread Block.
+        Per questo motivo è preferibile utilizzare questo tipo di memoria
+        quando è presente la necessità di salvare dei risultati parziali
+        di una computazione.
+
+    \item Memoria globale: è il tipo di memoria più lenta poiché non è presente
+        direttamente all'interno del chip, ma è un'unità DRAM esterna con grande
+        capacità di memorizzazione. Solitamente è utilizzata per
+        memorizzare i dati di input e output di un determinato Kernel.
+\end{itemize}
+
+\paragraph{Gerarchie di esecuzione}\mbox{}
+\\
+Come descritto in precedenza, un Kernel specifica un numero di Thread che
+andranno ad elaborare i dati, questa operazione si traduce fisicamente
+nell'esecuzione dei Thread appartenenti ad un Thread Block su uno
+Streaming Multiprocessor (SM)\cite{kirk2007nvidia}. All'interno di uno SM possono risiedere
+diversi Thread Block (che non potranno essere migrati su altri SM)
+che verranno eseguiti in modo concorrente. Questa scelta è dovuta al fatto
+che così facendo è possibile utilizzare la memoria condivisa presente
+all'interno di ogni SM, infatti sia il file dei Registri che la Memoria
+Condivisa vengono suddivisi equamente fra tutti i Thread Block in esecuzione
+su uno stesso SM, inoltre è disponibile la sincronizzazione fra Thread
+appartenenti ad un Thread Block tramite la primitiva \textit{\_\_syncthreads()}.
+

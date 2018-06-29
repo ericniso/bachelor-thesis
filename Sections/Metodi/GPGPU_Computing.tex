@@ -1,0 +1,77 @@
+\section{GPGPU Computing}
+
+Originariamente le GPU sono state concepite come co-processori il cui scopo
+era puramente l'elaborazione grafica, mentre le altre funzionalità
+non strettamente legate a questo ambito erano gestite dalla CPU.
+In seguito si è diffuso l'utilizzo del parallelismo fornito dalle GPU
+per accelerare diversi tipi di software non riguardanti
+l'area della computer grafica, ma un ambito più generico, è stato
+quindi coniato il termine General-Purpose computing on Graphics Processing
+Units per indicare l'utilizzo di questo tipo di device per applicazioni non
+legate all'elaborazione delle immagini.
+Sebbene le GPU operino a frequenze molto inferiori rispetto alle CPU, il loro
+punto di forza risiede nella presenza di molte più unità di elaborazione
+(denominate core), in grado quindi di eseguire centinaia di thread in parallelo
+rispetto all'esiguo numero disponibile per la CPU. La tipologia di thread
+istanziabile dalla GPU è ottimizzata per garantire un basso overhead
+per quanto riguarda la loro creazione e uno scambio di contesto quasi
+istantaneo, dato che solitamente si utilizza un cospicuo numero di thread
+per eseguire un determinato task, altrimenti le prestazioni si abbasserebbero
+\cite{kirk2007nvidia}.
+\\
+In generale ad uno stream di dati di input corrisponde la creazione di un
+numero finito di thread per elaborare le informazioni ricevute e solitamente
+ogni thread esegue le medesime istruzioni applicate ad un sottoinsieme
+dei dati. Un'architettura che opera secondo questo concetto è stata
+classificata da Michael J. Flynn con il termine di SIMD
+(Single Instruction, Multiple Data stream)\cite{duncan1990survey} e prevede
+la presenza di un'unità centrale di controllo (in questo caso la GPU) che
+distribuisce le istruzioni da eseguire alle unità di elaborazione (i thread).
+Queste unità possono accedere alle informazioni attraverso una comunicazione
+del tipo processo-processo oppure processo-memoria come nel caso delle GPU.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{simd}
+    \caption{Schema di esecuzione architettura SIMD\cite{duncan1990survey}}
+\end{figure}
+
+In ambito scientifico l'architetture SIMD è stata utilizzata per la simulazione
+di fenomeni fisici, chimici e biologici oltre che all'elaborazione delle
+immagini, grazie al fatto che le singole unità di elaborazione svolgono
+operazioni anche in virgola mobile con indirizzamento sia a 32 che a 64 bit.
+\\
+Oltre all'architettura SIMD è stata definita anche un'architettura che prevede
+l'esecuzione di diverse istruzioni su diversi stream di dati, denominata
+MIMD (Multiple Instructions, Multiple Data streams)\cite{duncan1990survey}.
+Questa architettura viene utilizzata solamente quando le unità di elaborazione
+devono eseguire istruzioni eterogenee, dunque è necessaria la presenza
+di diverse unità di controllo hardware.
+Essendo la decentralizzazione un punto cardine
+di questo paradigma, è necessario introdurre anche il concetto di
+sincronizzazione fra processi, sia essa utilizzando lo scambio di messaggi o
+la memoria condivisa, dato che le macchine operano in modo asincrono.
+\\
+Quindi per quanto riguarda l'elaborazione di insiemi fenomeni del mondo reale
+che obbediscono tutti alle medesime leggi,
+risulta opportuno utilizzare il paradigma SIMD, dato che è più semplice da
+implementare e gestire.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{mimd}
+    \caption{Schema di esecuzione architettura MIMD\cite{duncan1990survey}}
+\end{figure}
+
+Sebbene le GPU aumentino le performance in maniera considerevole, questi
+vantaggi si ottengono nel momento in cui lo stream di dati assume
+una dimensione tale per cui l'overhead di creazione dei thread risulti
+irrisorio rispetto alla computazione che si deve andare ad effettuare.
+Ad esempio nel momento in cui vogliamo effettuare la ricerca di un valore
+specifico all'interno di un array, se la dimensione dell'input è di poche
+migliaia di elementi l'utilizzo della GPU risulta inutile poichè
+le moderne CPU possiedono frequenze elevate che favoriscono l'esecuzione
+di istruzioni sequenziali su insiemi di pochi elementi, mentre l'istanziamento
+di un basso numero di thread unito ad una frequenza delle unità di elaborazione
+della GPU molto minore rispetto alla CPU non favorisce un approccio parallelo
+alla risoluzione di questo tipo di problemi.
