@@ -8,7 +8,10 @@ valore di fluorescenza rilevato dalle misurazioni in laboratorio e
 la frequenza con il quale esso si presenta all'interno dei campioni analizzati.
 La popolazione iniziale di cellule è rappresentabile tramite un array di
 lunghezza pari a $$L = \sum_{i=1}^{|\varphi|} \psi_{i}$$
-
+e rappresentato in figura \ref{fig:population-array} dove ad ogni elemento
+di un sottoinsieme di dimensione $\psi_{i}$ viene assegnato il corrispondente
+valore di fluorescenza $\varphi_{i}$
+\\
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}
@@ -40,12 +43,15 @@ lunghezza pari a $$L = \sum_{i=1}^{|\varphi|} \psi_{i}$$
 \caption{Rappresentazione della popolazione iniziale di cellule con i rispettivi
     valori di fluorescenza $\varphi_{i}$ tramite un array unidimensionale
     di lunghezza $L$}
+\label{fig:population-array}
 \end{figure}
 
 Ad ogni fenomeno di divisione cellulare corrisponde
 la creazione di due nuove cellule aventi valore di fluorescenza dimezzato
 rispetto alla cellula originaria.
 Questo comportamento è modellabile tramite un albero binario bilanciato
+come mostrato in figura \ref{fig:proliferation-tree}, dove ogni nodo rappresenta
+un cellula figlia, ed ogni ramo l'evento di proliferazione corrispondente
 
 \begin{figure}[H]
 \centering
@@ -72,6 +78,7 @@ Questo comportamento è modellabile tramite un albero binario bilanciato
 \end{tikzpicture}
 \caption{Fenomeno di divisione cellulare rappresentato tramite albero
     binario bilanciato}
+\label{fig:proliferation-tree}
 \end{figure}
 
 La popolazione iniziale di cellule dunque dà vita ad insieme di $L$ alberi di

@@ -1,16 +1,15 @@
 __global__
-void
-my_kernel()
+void my_kernel()
 {
-    // GPU code...
+    // codice GPU...
 }
 
 // CPU code
 int main()
 {
-    int n_blocks = 8; // Example blocks number
-    int n_threads_per_block = 32; // Example threads per block number
+    int n_blocks = 8; // Numero di thread block
+    int n_threads_per_block = 32; // Numero di thread per blocco
 
-    // Invoke Kernel on GPU
+    // Esecuzione kernel
     my_kernel<<<n_blocks, n_threads_per_block>>>();
 }

@@ -2,7 +2,7 @@
 
 La popolazione di cellule è modellata tramite un array, una delle strutture
 dati più adatte ad essere parallelizzate su GPU, dato che è possibile
-demandare la computazione di ogni elemento dell'array ad uno specifico Thread.
+demandare la computazione di ogni elemento dell'array ad uno specifico thread.
 Sia la creazione che la simulazione della proliferazione fanno uso solamente di
 array unidimensionali, dunque il problema si riduce all'implementazione di un
 algoritmo in grado di massimizzare il parallelismo necessario alla computazione
@@ -18,10 +18,10 @@ sequenziale. Una volta letto l'intero file sarà stato creato un array i cui
 elementi saranno le coppie di valori $(\varphi_{i}, \psi_{i})$.
 Ora che è nota la frequenza $\psi_{i}$ per ogni fluorescenza $\varphi_{i}$,
 è possibile invocare l'esecuzione di un Kernel per ogni coppia di
-valori tale che al Kernel vengano assegnati esattamente $\psi_{i}$ Thread
-e $\frac{\psi_{i}}{1024}$ Thread Block,
-in modo tale che ognuno di essi si occupi di generare una cellula avente
-$\varphi_{i}$ valore di fluorescenza.
+valori 
+in modo tale che ogni thread si occupi di generare una cellula avente
+$\varphi_{i}$ valore di fluorescenza come rappresentato in figura
+\ref{fig:population-creation}.
 \\
 \begin{figure}[H]
     \centering
@@ -42,9 +42,10 @@ $\varphi_{i}$ valore di fluorescenza.
         \nodes{\varphi_{i}, \varphi_{i}}
         \endpgftransparencygroup
     \end{tikzpicture}
-    \caption{Esecuzione di un Kernel formato da $\psi_{i}$ Thread necessari alla
+    \caption{Esecuzione di un Kernel formato da $\psi_{i}$ thread necessari alla
         creazione di esattamente $\psi_{i}$ cellule aventi $\varphi_{i}$ come
         valore di fluorescenza}
+    \label{fig:population-creation}
 \end{figure}
 
 % Descrizione dell'avanzamento della simulazione
@@ -59,13 +60,14 @@ Sia $X_{0,i}$ un elemento dell'array iniziale
 con $i < L$, a cui è associato un certo valore $\varphi_{j}$
 con $j < |\varphi|$ e sia $X_{1}$ un array rappresentante la nuova
 popolazione cellulare.
-Dal Kernel invocato, per ogni $X_{0,i}$ viene dedicato un GPU Thread,
+Dal Kernel invocato, per ogni $X_{0,i}$ viene dedicato un GPU thread,
 che si occuperà di creare due nuove cellule con fluorescenza dimezzata
 rispetto alla fluorescenza della cellula originaria e genererà
 il nuovo timer delle cellule sulla base del tipo di cellula considerata.
 \\
 Le nuove cellule sviluppate dalla proliferazione
-di $X_{0, i}$ saranno $$X_{1, (2 * i)}$$ $$X_{1, (2 * i + 1)}$$
+di $X_{0, i}$ saranno individuate dai seguenti elementi
+$$X_{1, (2 * i)}$$ $$X_{1, (2 * i + 1)}$$
 
 Esse avranno il proprio tempo di vita globale $\tau$
 incrementato secondo la seguente formula
@@ -94,7 +96,7 @@ $$\tau[X_{1, (2 * i)}] = \tau[X_{0, i}] + \mu[X_{0, i}] \geqslant \tau_{max}
 $$\varphi[X_{1, (2 * i)}] = \varphi[X_{0, i}] / 2 \leqslant \varphi_{min}
 \longrightarrow \sigma[X_{1, (2 * i)}] = \sigma[X_{1, (2 * i + 1)}] = Remove$$
 
-Una volta che il Kernel ha terminato l'esecuzione di tutti i Thread, il
+Una volta che il Kernel ha terminato l'esecuzione di tutti i thread, il
 controllo passa nuovamente alla CPU.
 L'implementazione del metodo a stati risulta essere necessario poiché a seguito
 dell'evento di proliferazione cellulare
@@ -169,16 +171,16 @@ L'idea è utilizzare il parallelismo dinamico per computare non solo il primo
 livello degli alberi di proliferazione cellulare, ma proseguire attraverso i
 livelli successivi fino al termine della simulazione.
 Per effettuare questa operazione è necessario sfruttare al massimo il concetto di
-Thread Block dato che CUDA offre la possibilità di sincronizzare
-tutti i Thread appartenenti ad un blocco tramite la primitiva
+thread block dato che CUDA offre la possibilità di sincronizzare
+tutti i thread appartenenti ad un blocco tramite la primitiva
 \textit{\_\_syncthreads()}\cite{jones2012introduction}.
-L'array $X_{1}$ viene computato da un numero $\ceil*{L/2^{10}}$ di Thread Block,
+L'array $X_{1}$ viene computato da un numero $\ceil*{L/2^{10}}$ di thread block,
 in seguito invece di terminare l'iterazione e aggiornare l'array dei risultati
 $P$, è possibile calcolare gli array successivi $X_{2}...X_{n}$ suddividendoli
-a loro volta in Thread Block, ovvero sincronizzare i Thread tramite la
+a loro volta in thread block, ovvero sincronizzare i thread tramite la
 primitiva \textit{\_\_syncthreads()} e successivamente invocare l'esecuzione di
-un nuovo Kernel utilizzando però $2$ Thread Block invece che $1$ dato che dal
-Thread Block sincronizzato che si sta prendendo in considerazione sono state
+un nuovo Kernel utilizzando però $2$ thread block invece che $1$ dato che dal
+thread block sincronizzato che si sta prendendo in considerazione sono state
 generate $2 * 2^{10}$ cellule appartenenti alla nuova popolazione.
 \\
 \begin{figure}[H]
@@ -248,7 +250,7 @@ corrispondente al livello degli alberi considerato, come segue:
     \item $X_{2} = [0, 1, 2, 3, 4, 5, 6, 7]$    
 \end{itemize}
 
-Si denoti con $B_{i,j}$ un generico Thread Block dove
+Si denoti con $B_{i,j}$ un generico thread block dove
 $i$ rappresenta la popolazione $X_{i}$, mentre $j$ l'indice del blocco.
 Quindi $B_{0,0} = \{0, 1\}$ sarà il blocco che date le
 cellule $\{0, 1\} \subseteq X_{0}$ si occupa di
@@ -314,8 +316,8 @@ ad alcuni rallentamenti, poiché è inutile computare rami le cui cellule
 sono state marcate come $Inactive$ o $Remove$ dato che non contribuiscono
 alla creazione del nuovo livello di proliferazione.
 Utilizzando la Shared Memory\cite{sanders2010cuda}
-, ovvero una zona di memoria condivisa tra tutti e soli i Thread appartenenti ad
-uno stesso Thread Block, è possibile
+, ovvero una zona di memoria condivisa tra tutti e soli i thread appartenenti ad
+uno stesso thread block, è possibile
 settare un flag indicante l'avvenuto evento di proliferazione
 cellulare. Se ci si trovasse nel caso in cui nessun evento si è verificato,
 sarebbe inutile invocare un nuovo Kernel, di conseguenza
@@ -366,9 +368,11 @@ produce i seguenti risultati
 \end{minipage}
 \caption{Confronto di alberi di proliferazione cellulare utilizzando il metodo
     del bounding}
+\label{fig:tree-bounding}
 \end{figure}
 
-Come è possibile notare, l'albero risultante dall'applicazione del
+Come è possibile notare dalla figura \ref{fig:tree-bounding},
+l'albero risultante dall'applicazione del
 bounding presenta meno nodi, ciò equivale al fatto di risparmiare
 risorse evitando la computazione di sotto-alberi inutili ai fini della
 simulazione. 
@@ -444,7 +448,8 @@ $\tau_{max}$ definito per la simulazione.
 Sia $\mu_{max}$ il tempo medio di divisione
 del tipo di cellula avente $max(\pi)$.
 Allora è possibile stimare che il numero $\eta$ dei livelli di profondità
-dell'albero è $$\eta : \sum\limits_{i=1}^{\eta - 1}
+dell'albero è dato dalla seguente relazione
+$$\eta : \sum\limits_{i=1}^{\eta - 1}
 \mu_{max} \leqslant \tau_{max} \leqslant \sum\limits_{i=1}^{\eta} \mu_{max}$$
 
 Questo valore è utile per l'ottimizzazione del numero di livelli necessario
@@ -481,7 +486,7 @@ ad un valore di $\tau_{max}$ di $720$, questo perché sebbene venga applicata
 l'inferenza dei parametri, l'algoritmo prevede l'istanziamento di $\eta$
 livelli solamente se è disponibile abbastanza memoria all'interno della GPU.
 Infatti con una valore di $\tau_{max} > 720$ non è presente nessun aumento
-di prestazioni poichè la GPU utilizzata non ha abbastanza memoria per istanziare
+di prestazioni poiché la GPU utilizzata non ha abbastanza memoria per istanziare
 un numero di livelli pari a $\eta$ inferito dai parametri iniziali.
 Quindi risulta sicuramente un vantaggio l'utilizzo di GPU con molta memoria
 dedicata a disposizione.
