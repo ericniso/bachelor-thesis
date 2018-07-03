@@ -114,7 +114,11 @@ superato il limite temporale $\tau_{max}$, dunque è possibile calcolare
 l'istogramma dei risultati utilizzando la funzioni definite dalle librerie
 Thrust\cite{bell2011thrust} di CUDA e salvare il risultato ottenuto
 su file.
-
+\\
+Come è possibile notare dal grafico \ref{chart:python-cuda}, è presente un
+cospicuo aumento delle performance
+rispetto alla versione non parallela dell'algoritmo, ma non è ancora degno
+di nota per quanto riguarda i risultati che si vogliono ottenere.
 \begin{figure}[t]
     \centering
     \begin{tikzpicture}
@@ -134,11 +138,6 @@ su file.
         proliferazione $\tau_{max}$}
     \label{chart:python-cuda}
 \end{figure}
-
-Come è possibile notare dal grafico \ref{chart:python-cuda}, è presente un
-cospicuo aumento delle performance
-rispetto alla versione non parallela dell'algoritmo, ma non è ancora degno
-di nota per quanto riguarda i risultati che si vogliono ottenere.
 
 % Spiegazione dei metodi per accelerare la computazione
 \subsection{Acceleranti}
