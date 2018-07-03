@@ -23,7 +23,7 @@ in modo tale che ogni thread si occupi di generare una cellula avente
 $\varphi_{i}$ valore di fluorescenza come rappresentato in figura
 \ref{fig:population-creation}.
 \\
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     \begin{tikzpicture}
         \pgftransparencygroup
@@ -115,7 +115,7 @@ l'istogramma dei risultati utilizzando la funzioni definite dalle librerie
 Thrust\cite{bell2011thrust} di CUDA e salvare il risultato ottenuto
 su file.
 
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     \begin{tikzpicture}
         \begin{axis}[legend pos=outer north east,
@@ -182,8 +182,8 @@ primitiva \textit{\_\_syncthreads()} e successivamente invocare l'esecuzione di
 un nuovo Kernel utilizzando però $2$ thread block invece che $1$ dato che dal
 thread block sincronizzato che si sta prendendo in considerazione sono state
 generate $2 * 2^{10}$ cellule appartenenti alla nuova popolazione.
-\\
-\begin{figure}[H]
+
+\begin{figure}[t]
     \begin{minipage}[b]{.5\linewidth}
     \centering
     \begin{tikzpicture}[level/.style={sibling distance=30mm/#1}]
@@ -238,7 +238,6 @@ generate $2 * 2^{10}$ cellule appartenenti alla nuova popolazione.
         a nuove popolazioni cellulari}
     \label{fig:prolif-tree}
 \end{figure}
-
 In figura \ref{fig:prolif-tree} sono raffigurati due alberi di proliferazione,
 dove ogni nodo
 rappresenta l'indice di una cellula all'interno dell'array della popolazione
@@ -276,7 +275,7 @@ rappresentino un livello di proliferazione superiore alla limitazione hardware,
 iterando nuovamente come se $X_{n}$ rappresentasse una nuova
 popolazione iniziale $X_{0}$ ino a raggiungere il termine della simulazione.
 
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     \begin{tikzpicture}
         \begin{axis}[legend pos=outer north east,
@@ -295,7 +294,6 @@ popolazione iniziale $X_{0}$ ino a raggiungere il termine della simulazione.
     tempo massimo di proliferazione $\tau_{max}$}
     \label{chart:original-dynamic}
 \end{figure}
-
 Dal grafico in figura \ref{chart:original-dynamic} è possibile vedere
 l'aumento significativo delle
 performance rispetto alla versione che non presenta l'utilizzo del
@@ -325,9 +323,14 @@ la computazione dei successivi sotto-alberi viene interrotta per consentire
 la preventiva terminazione dei Kernel precedenti.
 \\
 Siano $A = Alive$, $I = Inactive$, $R = Remove$, allora il metodo implementato
-produce i seguenti risultati
+produce i risultati rappresentati in figura \ref{fig:tree-bounding}.
+Come è possibile notare,
+l'albero risultante dall'applicazione del
+bounding presenta un numero inferiore nodi, ciò equivale al fatto di risparmiare
+risorse evitando la computazione di sotto-alberi inutili ai fini della
+simulazione.
 
-\begin{figure}[H]
+\begin{figure}[t]
 \begin{minipage}[b]{.5\linewidth}
 \centering
 \begin{tikzpicture}[level/.style={sibling distance=30mm/#1}]
@@ -370,14 +373,7 @@ produce i seguenti risultati
     del bounding}
 \label{fig:tree-bounding}
 \end{figure}
-
-Come è possibile notare dalla figura \ref{fig:tree-bounding},
-l'albero risultante dall'applicazione del
-bounding presenta meno nodi, ciò equivale al fatto di risparmiare
-risorse evitando la computazione di sotto-alberi inutili ai fini della
-simulazione. 
-\\
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     \begin{tikzpicture}
         \begin{axis}[legend pos=outer north east,
@@ -397,7 +393,6 @@ simulazione.
     $\tau_{max}$}
     \label{chart:dynamic-bounding}
 \end{figure}
-
 In entrambe la versioni dell'algoritmo mostrate nel grafico in figura
 \ref{chart:dynamic-bounding} si nota che il tempo di simulazione
 rimane costante anche al crescere del limite $\tau_{max}$ grazie al parallelismo
@@ -457,7 +452,7 @@ per portare a termine la simulazione mediante una sola iterazione.
 Essendo però un processo di tipo stocastico, è possibile che il valore calcolato
 $\eta$ non rispecchi a pieno la realtà che si vuole simulare.
 
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     \begin{tikzpicture}
         \begin{axis}[legend pos=outer north east,
@@ -479,8 +474,7 @@ $\eta$ non rispecchi a pieno la realtà che si vuole simulare.
     $\tau_{max}$}
     \label{chart:bounding-inference}
 \end{figure}
-
-Nel grafico in figura \ref{chart:bounding-inference} si può notare un maggiore
+Nel grafico in figura \ref{chart:bounding-inference} si può notare un
 incremento di prestazioni fino
 ad un valore di $\tau_{max}$ di $720$, questo perché sebbene venga applicata
 l'inferenza dei parametri, l'algoritmo prevede l'istanziamento di $\eta$
@@ -527,8 +521,13 @@ la frequenza riguardante i valori di fluorescenza delle cellule $Inactive$
 è già stata aggiornata durante l'esecuzione del kernel.
 Mediante questa tecnica la $cudaMemcpy()$ viene utilizzata solamente a inizio
 e fine simulazione per il salvataggio dei risultati.
-
-\begin{figure}[H]
+\\
+Come si evince dal grafico in figura \ref{chart:inference-histogram}, 
+questo è l'accelerante che incrementa maggiormente
+le performance dell'algoritmo, dato che risolve quasi totalmente il problema
+del collo di bottiglia causato dal trasferimento bidirezionale delle informazioni
+per l'avanzamento della simulazione.
+\begin{figure}[t]
     \centering
     \begin{tikzpicture}
         \begin{axis}[legend pos=outer north east,
@@ -551,12 +550,6 @@ e fine simulazione per il salvataggio dei risultati.
     \label{chart:inference-histogram}
 \end{figure}
 
-Come si evince dal grafico in figura \ref{chart:inference-histogram}, 
-questo è l'accelerante che incrementa maggiormente
-le performance dell'algoritmo, dato che risolve quasi totalmente il problema
-del collo di bottiglia causato dal trasferimento bidirezionale delle informazioni
-per l'avanzamento della simulazione.
-
 % Descrizione del problema della gestione della memoria
 \subsection{Gestione della memoria}
 
@@ -574,8 +567,21 @@ $Remove$ non vengano prese in considerazione per la computazione, sono
 comunque presenti ancora all'interno delle diverse popolazioni, dato che
 dopo ogni iterazione la memoria non viene più filtrata in quanto non più
 trasferita sulla CPU.
+\\
+La crescita esponenziale dell'occupazione di memoria visibile in figura
+\ref{chart:serial-parallel-histogram} potrebbe essere un
+problema nel momento in cui il tempo $\tau_{max}$ inizia a crescere
+ulteriormente. La soluzione immediata a questo problema potrebbe essere di
+natura economica, ovvero l'acquisto di GPU moderne con molta memoria a
+disposizione. Il problema però persiste, quindi una possibile soluzione
+potrebbe essere quella di computare ad un certo punto solamente un sottoinsieme
+della popolazione e trasferire i restanti elementi sulla CPU, per poi
+elaborarli nuovamente quando il primo sottoinsieme di popolazione è stato
+elaborato. Questo però introdurrebbe nuovamente la necessità di utilizzare
+in modo assiduo $cudaMemcpy()$, però fino ad ora pare essere l'unica soluzione
+plausibile.
 
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     \begin{tikzpicture}
         \begin{axis}[legend pos=north west,
@@ -595,16 +601,3 @@ trasferita sulla CPU.
         dell'algoritmo}
     \label{chart:serial-parallel-histogram} 
 \end{figure}
-
-La crescita esponenziale dell'occupazione di memoria visibile in figura
-\ref{chart:serial-parallel-histogram} potrebbe essere un
-problema nel momento in cui il tempo $\tau_{max}$ inizia a crescere
-ulteriormente. La soluzione immediata a questo problema potrebbe essere di
-natura economica, ovvero l'acquisto di GPU moderne con molta memoria a
-disposizione. Il problema però persiste, quindi una possibile soluzione
-potrebbe essere quella di computare ad un certo punto solamente un sottoinsieme
-della popolazione e trasferire i restanti elementi sulla CPU, per poi
-elaborarli nuovamente quando il primo sottoinsieme di popolazione è stato
-elaborato. Questo però introdurrebbe nuovamente la necessità di utilizzare
-in modo assiduo $cudaMemcpy()$, però fino ad ora pare essere l'unica soluzione
-plausibile.

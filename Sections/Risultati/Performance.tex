@@ -1,12 +1,5 @@
 \section{Performance}
 
-L'implementazione di un modello ad albero per la parallelizzazione di eventi
-di proliferazione cellulare si è rivelata una tecnica efficiente per questo
-tipo di simulazione, di seguito in figura \ref{chart:performance-results}
-sono presenti i risultati ottenuti per
-quanto riguarda i tempi necessari alla computazione della simulazione
-modificando il parametro $\tau_{max}$.
-\\
 \begin{figure}[H]
     \begin{minipage}[b]{.5\linewidth}
         \centering
@@ -53,10 +46,6 @@ modificando il parametro $\tau_{max}$.
     $\tau_{max}$ per la proliferazione cellulare}
     \label{chart:performance-results}
 \end{figure}
-
-Un'idea ancora più generale riguardo allo speedup guadagnato è fornita dal
-seguente grafico
-\\
 \begin{figure}[H]
     \begin{minipage}[b]{.5\linewidth}
         \centering
@@ -113,6 +102,13 @@ seguente grafico
     \label{chart:speedup}
 \end{figure}
 
+L'implementazione di un modello ad albero per la parallelizzazione di eventi
+di proliferazione cellulare si è rivelata una tecnica efficiente per questo
+tipo di simulazione, in figura \ref{chart:performance-results}
+sono presenti i risultati ottenuti per
+quanto riguarda i tempi necessari alla computazione della simulazione
+modificando il parametro $\tau_{max}$.
+\\
 Come è possibile notare dal grafico \ref{chart:speedup} la scheda
 GTX 970 è più performante della Tesla K80. Questo è dato dal fatto che
 la GTX 970 possiede un clock di 1050 MHz, mentre la Tesla K80 solamente di
