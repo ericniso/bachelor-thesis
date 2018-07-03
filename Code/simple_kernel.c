@@ -1,5 +1,4 @@
-__global__
-void my_kernel()
+__global__ void my_kernel()
 {
     // codice GPU...
 }

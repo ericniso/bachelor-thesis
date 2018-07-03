@@ -19,21 +19,21 @@ biologici.
 \\
 Generalmente l'hardware può cambiare con l'avvento di
 nuove generazioni di GPU ma la struttura generale si basa sempre sul concetto di
-Streaming Multiprocessors (SM) \cite{nickolls2010gpu}
+Streaming Multiprocessors (SM) \cite{nickolls2010gpu}.
+\\
+In figura \ref{fig:fermi-arch} è rappresentata schematicamente l'architettura
+di uno SM di una GPU NVIDIA della generazione Fermi. Da notare il
+numero elevato di core disponibili per l'elaborazione delle istruzioni e la
+presenza di due tipi distinti di memorie che risiedono all'interno dello SM:
+i registri e la memoria condivisa.
 
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     \includegraphics[scale=0.4]{fermi_sm}
     \caption{Streaming Multiprocessor dell'architettura Fermi 
         \cite{nickolls2010gpu}}
     \label{fig:fermi-arch}
 \end{figure}
-
-In figura \ref{fig:fermi-arch} è rappresentata schematicamente l'architettura
-di uno SM di una GPU NVIDIA della generazione Fermi. Da notare il
-numero elevato di core disponibili per l'elaborazione delle istruzioni e la
-presenza di due tipi distinti di memorie che risiedono all'interno dello SM:
-i registri e la memoria condivisa.
 
 \paragraph{Astrazione Software}\mbox{}
 \\
@@ -70,19 +70,24 @@ Il modello astratto definisce tre tipologie di oggetti:
         invocare la primitiva \textit{cudaDeviceSynchronize()}, operazione
         che deve essere effettuata dalla CPU. Essendo una funzione sincrona,
         essa blocca il flusso di esecuzione delle istruzioni della CPU,
-        ponendola in stato di attesa rispetto al termine dei kernel
+        ponendola in stato di attesa fino al termine dei kernel
         in esecuzione sulla GPU.
         Risulta quindi buona norma minimizzare l'utilizzo di questa primitiva,
         per evitare rallentamenti significativi all'interno del software.
 \end{itemize}
 
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     \includegraphics[scale=0.5]{cuda_astraction}
     \caption{Schema della gerarchia di thread, thread block, e grid 
         \cite{nickolls2010gpu}}
+    \label{fig:gpu-abstract-scheme}
 \end{figure}
 
+In figura \ref{fig:gpu-abstract-scheme} è rappresentato uno schema delle
+relazioni che intercorrono fra thread, thread block, grid e le
+tipologie di memorie alle quali essi hanno accesso.
+\\
 Le procedure che vengono eseguite sulla GPU vengono chiamate kernel
 (identificabili grazie al prefisso \textit{\_\_global\_\_})
 ed è possibile specificarne la dimensione, ovvero decidere quanti
@@ -93,7 +98,6 @@ all'esecuzione del codice invocato.
     caption={Esempio di invocazione GPU kernel},
     style=custom]
     {Code/simple_kernel.c}
-
 Come è possibile notare nell'esempio di codice \ref{kernel}, si sta invocando
 l'esecuzione di un kernel specificando l'utilizzo di 8 thread block e
 32 thread per blocco. In generale il numero totale di
@@ -102,7 +106,7 @@ $$B * T$$ dove $B$ e $T$
 sono rispettivamente
 il numero di thread block e il numero
 di thread per blocco che si vuole utilizzare.
-
+\\
 La possibilità di modificare la suddivisione del kernel in thread block
 si rivela molto utile nell'elaborazione di strutture dati non
 particolarmente complesse, come gli array.
@@ -122,6 +126,12 @@ devono essere utilizzati e $\beta$ e $\tau$ sono gli id locali
 associati al thread block e
 al thread con $\beta < B$ e $\tau < T$.
 \\
+Nel listato di codice \ref{threadid}, scritto in linguaggio di programmazione
+CUDA C, è riportato un esempio di calcolo del
+thread id globale utilizzando gli id locali del thread e del blocco, dove
+\textit{threadIdx.x}, \textit{blockIdx.x} e \textit{blockDim.x} corrispondono
+rispettivamente ai valori di $\tau$, $\beta$ e $B$.
+
 \lstinputlisting[label=threadid, language=C++,
     caption={Esempio di calcolo dell'id globale associato ad un thread durante
             l'esecuzione di un kernel},
@@ -139,7 +149,7 @@ tipologie di memorie\cite{kirk2007nvidia}:
         Vengono utilizzati per memorizzare le
         variabili locali dichiarate da ogni thread;
     
-    \item memoria condivisa: la velocità di accesso è pressochè simile a quella
+    \item memoria condivisa: la velocità di accesso è pressoché simile a quella
         dei registri poiché anch'essa è presente all'interno del chip e viene
         suddivisa fra i thread block schedulati sullo Streaming Multiprocessor,
         rendendo possibile lo scambio di informazioni intra blocco evitando

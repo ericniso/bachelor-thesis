@@ -8,8 +8,8 @@ Central Processing Unit (CPU).
 In seguito si è diffuso l'utilizzo del parallelismo fornito dalle GPU
 per accelerare diversi tipi di software non riguardanti
 l'area della computer grafica, dando luogo al General-Purpose computing
-on Graphics Processing Units, cioè l'utilizzo di questo tipo di hardware
-per applicazioni non legate all'elaborazione delle immagini.
+on Graphics Processing Units (GPGPU), cioè l'utilizzo di questo tipo di hardware
+per applicazioni non legate all'elaborazione grafica.
 Sebbene le GPU operino a frequenze molto inferiori rispetto alle CPU, il loro
 punto di forza risiede nella presenza di molte più unità di elaborazione
 (denominate core), in grado quindi di eseguire centinaia o migliaia di thread
@@ -25,7 +25,7 @@ In generale ad uno stream di dati di input corrisponde la creazione di un
 numero finito di thread per elaborare le informazioni ricevute e solitamente
 ogni thread esegue le medesime istruzioni applicate ad un sottoinsieme
 dei dati. Un'architettura che opera secondo questo concetto è stata
-classificata da Michael J. Flynn con il termine di Single Instruction, Multiple 
+classificata da Michael J. Flynn con il termine di Single Instruction Multiple 
 Data (SIMD)\cite{duncan1990survey} e prevede
 la presenza di un'unità centrale di controllo (in questo caso la GPU) che
 distribuisce le istruzioni da eseguire alle unità di elaborazione (i thread).
@@ -39,7 +39,7 @@ operazioni anche in virgola mobile con indirizzamento sia a 32 che a 64 bit.
 \\
 Oltre a SIMD è stata definita anche un'architettura che prevede
 l'esecuzione di diverse istruzioni su diversi stream di dati, denominata
-Multiple Instructions, Multiple Data (MIMD)\cite{duncan1990survey}.
+Multiple Instructions Multiple Data (MIMD)\cite{duncan1990survey}.
 Questa architettura viene utilizzata solamente quando le unità di elaborazione
 devono eseguire istruzioni eterogenee, dunque è necessaria la presenza
 di diverse unità di controllo hardware.
@@ -47,13 +47,51 @@ Essendo la decentralizzazione un punto cardine
 di questo paradigma, è necessario introdurre anche il concetto di
 sincronizzazione fra processi, utilizzando lo scambio di messaggi o
 la memoria condivisa, dato che le macchine operano in modo asincrono.
-\\
-Quindi per quanto riguarda l'elaborazione di insiemi di fenomeni del mondo reale
-che obbediscono tutti alle medesime leggi,
-risulta opportuno utilizzare il paradigma SIMD, dato che è più semplice da
-implementare e gestire.
+\begin{figure}[t]
+    \begin{minipage}[b]{.5\linewidth}
+        \centering
+        \includegraphics[scale=0.2]{cluster}
+        \subcaption{Schema Computer cluster \cite{hunter1995multi}}
+    \end{minipage}
+    \begin{minipage}[b]{.5\linewidth}
+        \centering
+        \includegraphics[scale=0.3]{grid}
+        \subcaption{Schema Grid computing \cite{foster2002grid}}
+    \end{minipage}
+    \caption{Esempio schematico di architetture MIMD:
+        Computer cluster e Grid computing}
+    \label{fig:cluster-grid}
+\end{figure}
+Sebbene sia possibile da parte di un'architettura MIMD emulare il modello
+SIMD eseguendo il medesimo set di istruzioni per ogni processore $P$, il
+principale vantaggio di SIMD in ambito GPGPU computing è il collegamento diretto
+all'interno della stessa macchina tra le GPU impiegate per l'elaborazione e la 
+CPU. Questa è una caratteristica che differisce dai tipi di
+architetture MIMD più diffusi, come il Computer cluster e il Grid Computing.
+Nei Computer cluster i processori $P$ sono rappresentati da CPU singole
+(denominate nodi), come si può evince dalla figura \ref{fig:cluster-grid},
+le quali che svolgono le elaborazioni e sono connesse tra loro da una
+rete telematica solitamente in fibra
+ottica per ridurre i ritardi nella comunicazione fra i nodi della rete.
+I nodi svolgono dunque le operazioni in parallelo rispetto a tutti gli altri,
+comunicando tra loro attraverso la rete locale le informazioni necessarie al
+completamento dell'elaborazione assegnata al cluster. Questi cluster
+generalmente sono collocati all'interno dello stesso luogo
+(una stanza o un intero edificio), risentono dunque solamente del ritardo generato
+da una rete locale di computer ma non di quello generato da una
+possibile distribuzione geografica dei nodi di elaborazione, come nel caso
+del Grid computing. Questo modello rappresentato dalla figura
+\ref{fig:cluster-grid} 
+prevede che diversi enti ed organizzazioni mettano in condivisione risorse e
+dati per portare a termine la medesima finalità.
+I nodi delle risorse (sia hardware che softawre) possono essere
+dislocati anche geografimente in luoghi differenti, questo introduce il problema
+della sincronizzazione delle risorse necessarie a causa delle problematiche
+che la rete internet introduce, ma il vantaggio è la disponibilità di grandi
+quantità di dati e hardware per l'elaborazione degli stessi che non sarebbe
+possibile ottenere utilizzando un'architettura Cluster.
 
-\begin{figure}[H]
+\begin{figure}[t]
     \begin{minipage}[b]{.5\linewidth}
         \centering
         \includegraphics[scale=0.3]{simd}
@@ -77,21 +115,21 @@ provenienti dallo stream di dati, utilizzando anche la memoria $M$ come supporto
 per lettura e scrittura di informazioni. Mentre nello schema MIMD si nota
 il diverso approccio adottato rispetto a SIMD, ovvero l'assenza di un'unità
 di controllo centrale e ogni processore $P$ che esegue
-unp stream di istruzioni differente l'uno dall'altro,
+uno stream di istruzioni differente l'uno dall'altro,
 con possibilità di accesso solamente alla
 propria memoria $M$ dedicata e con sincronizzazione e scambio di informazioni
 tra processori mediante lo scambio di messaggi, sottolineando maggiormente
 la natura asincrona di questo modello.
-
+\\
 Sebbene le GPU aumentino le performance in maniera considerevole, questi
 vantaggi si ottengono nel momento in cui lo stream di dati assume
 una dimensione tale per cui l'overhead di creazione dei thread risulti
 irrisorio rispetto alla computazione che si deve andare ad effettuare.
 Ad esempio nel momento in cui vogliamo effettuare la ricerca di un valore
 specifico all'interno di un array, se la dimensione dell'input è di poche
-migliaia di elementi l'utilizzo della GPU risulta inutile poichè
+migliaia di elementi l'utilizzo della GPU risulta inutile poiché
 le moderne CPU possiedono frequenze elevate che favoriscono l'esecuzione
 di istruzioni sequenziali su insiemi di pochi elementi, mentre l'istanziamento
-di un basso numero di thread unito ad una frequenza delle unità di elaborazione
+di un basso numero di thread unito a una frequenza delle unità di elaborazione
 della GPU molto inferiore rispetto a quella delle CPU non favorisce un
 approccio parallelo alla risoluzione di questo tipo di problemi.
