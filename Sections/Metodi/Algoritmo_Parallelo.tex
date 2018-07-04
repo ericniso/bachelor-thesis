@@ -328,7 +328,6 @@ l'albero risultante dall'applicazione del
 bounding presenta un numero inferiore nodi, ciò equivale al fatto di risparmiare
 risorse evitando la computazione di sotto-alberi inutili ai fini della
 simulazione.
-
 \begin{figure}[t]
 \begin{minipage}[b]{.5\linewidth}
 \centering
@@ -409,7 +408,30 @@ l'implementazione dell'ultimo accelerante.
 
 % Descrizione del metodo di inferenza della profondità dell'albero
 \paragraph{Inferenza del livello di profondità}\mbox{}
-\\
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[legend pos=outer north east,
+                xtick=data,
+                xlabel={$\tau_{max}$},
+                ylabel={tempo simulazione (s)}
+            ]
+            \addplot table[x=Time, y=Bounding] {Data/Accelerants/fit.txt};
+            \addplot table[x=Time, y=Inference] {Data/Accelerants/fit.txt};
+            \legend{Bounding, Inferenza}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Confronto dei tempi di esecuzione (in secondi) dell'algoritmo
+    parallelo fra la versione che implementa gli acceleranti descritti fino al
+    metodo del bounding
+    e la versione che oltre a quest'ultimo utilizza anche l'inferenza del numero
+    di livelli necessari alla simulazione,
+    utilizzando differenti valori di tempo massimo di proliferazione
+    $\tau_{max}$}
+    \label{chart:bounding-inference}
+\end{figure}
+
 Sebbene CUDA ci ponga un livello massimo di nesting pari a 24 livelli,
 nei modelli presi in considerazione per queste simulazioni, difficilmente
 viene superata la soglia dei $5$ eventi di proliferazione per ogni cellula,
@@ -450,29 +472,7 @@ Questo valore è utile per l'ottimizzazione del numero di livelli necessario
 per portare a termine la simulazione mediante una sola iterazione.
 Essendo però un processo di tipo stocastico, è possibile che il valore calcolato
 $\eta$ non rispecchi a pieno la realtà che si vuole simulare.
-
-\begin{figure}[t]
-    \centering
-    \begin{tikzpicture}
-        \begin{axis}[legend pos=outer north east,
-                xtick=data,
-                xlabel={$\tau_{max}$},
-                ylabel={tempo simulazione (s)}
-            ]
-            \addplot table[x=Time, y=Bounding] {Data/Accelerants/fit.txt};
-            \addplot table[x=Time, y=Inference] {Data/Accelerants/fit.txt};
-            \legend{Bounding, Inferenza}
-        \end{axis}
-    \end{tikzpicture}
-    \caption{Confronto dei tempi di esecuzione (in secondi) dell'algoritmo
-    parallelo fra la versione che implementa gli acceleranti descritti fino al
-    metodo del bounding
-    e la versione che oltre a quest'ultimo utilizza anche l'inferenza del numero
-    di livelli necessari alla simulazione,
-    utilizzando differenti valori di tempo massimo di proliferazione
-    $\tau_{max}$}
-    \label{chart:bounding-inference}
-\end{figure}
+\\
 Nel grafico in figura \ref{chart:bounding-inference} si può notare un
 incremento di prestazioni fino
 ad un valore di $\tau_{max}$ di $720$, questo perché sebbene venga applicata
@@ -552,6 +552,27 @@ per l'avanzamento della simulazione.
 % Descrizione del problema della gestione della memoria
 \subsection{Gestione della memoria}
 
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[legend pos=north west,
+                xtick=data,
+                xlabel={iterazioni dell'algoritmo},
+                ylabel={dimensione popolazione (MB)}
+            ]
+            \addplot table[x=Iteration, y=Serial] {Data/Memory/validation.txt};
+            \addplot table[x=Iteration, y=Parallel] {Data/Memory/validation.txt};
+            \legend{Istogramma seriale,Istogramma parallelo}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Confronto dell'utilizzo di memoria fra la versione dell'algoritmo
+        che prevede il calcolo seriale dell'istogramma con rimozione delle
+        cellule non $Alive$ e il calcolo parallelo dell'istogramma dei risultati
+        senza filtraggio della popolazione cellulare al termine di $n$ iterazioni
+        dell'algoritmo}
+    \label{chart:serial-parallel-histogram} 
+\end{figure}
+
 L'implementazione degli acceleranti ha migliorato di gran lunga le
 performance dell'algoritmo, ma ha introdotto un problema, ovvero la crescita
 esponenziale della memoria.
@@ -579,24 +600,3 @@ elaborarli nuovamente quando il primo sottoinsieme di popolazione è stato
 elaborato. Questo però introdurrebbe nuovamente la necessità di utilizzare
 in modo assiduo $cudaMemcpy()$, però fino ad ora pare essere l'unica soluzione
 plausibile.
-
-\begin{figure}[t]
-    \centering
-    \begin{tikzpicture}
-        \begin{axis}[legend pos=north west,
-                xtick=data,
-                xlabel={iterazioni dell'algoritmo},
-                ylabel={dimensione popolazione (MB)}
-            ]
-            \addplot table[x=Iteration, y=Serial] {Data/Memory/validation.txt};
-            \addplot table[x=Iteration, y=Parallel] {Data/Memory/validation.txt};
-            \legend{Istogramma seriale,Istogramma parallelo}
-        \end{axis}
-    \end{tikzpicture}
-    \caption{Confronto dell'utilizzo di memoria fra la versione dell'algoritmo
-        che prevede il calcolo seriale dell'istogramma con rimozione delle
-        cellule non $Alive$ e il calcolo parallelo dell'istogramma dei risultati
-        senza filtraggio della popolazione cellulare al termine di $n$ iterazioni
-        dell'algoritmo}
-    \label{chart:serial-parallel-histogram} 
-\end{figure}
