@@ -17,7 +17,7 @@ frequenza è salvato su un file di testo che deve essere letto in modo
 sequenziale. Una volta letto l'intero file sarà stato creato un array i cui
 elementi saranno le coppie di valori $(\varphi_{i}, \psi_{i})$.
 Ora che è nota la frequenza $\psi_{i}$ per ogni fluorescenza $\varphi_{i}$,
-è possibile invocare l'esecuzione di un Kernel per ogni coppia di
+è possibile invocare l'esecuzione di un kernel per ogni coppia di
 valori 
 in modo tale che ogni thread si occupi di generare una cellula avente
 $\varphi_{i}$ valore di fluorescenza come rappresentato in figura
@@ -42,7 +42,7 @@ $\varphi_{i}$ valore di fluorescenza come rappresentato in figura
         \nodes{\varphi_{i}, \varphi_{i}}
         \endpgftransparencygroup
     \end{tikzpicture}
-    \caption{Esecuzione di un Kernel formato da $\psi_{i}$ thread necessari alla
+    \caption{Esecuzione di un kernel formato da $\psi_{i}$ thread necessari alla
         creazione di esattamente $\psi_{i}$ cellule aventi $\varphi_{i}$ come
         valore di fluorescenza}
     \label{fig:population-creation}
@@ -60,7 +60,7 @@ Sia $X_{0,i}$ un elemento dell'array iniziale
 con $i < L$, a cui è associato un certo valore $\varphi_{j}$
 con $j < |\varphi|$ e sia $X_{1}$ un array rappresentante la nuova
 popolazione cellulare.
-Dal Kernel invocato, per ogni $X_{0,i}$ viene dedicato un GPU thread,
+Dal kernel invocato, per ogni $X_{0,i}$ viene dedicato un GPU thread,
 che si occuperà di creare due nuove cellule con fluorescenza dimezzata
 rispetto alla fluorescenza della cellula originaria e genererà
 il nuovo timer delle cellule sulla base del tipo di cellula considerata.
@@ -82,21 +82,21 @@ solamente se $\tau[X_{0, i}] + \mu[X_{0, i}] \leqslant \tau_{max}$ oppure se
 $\varphi[X_{0, i}] / 2 \geqslant \varphi_{min}$.
 Questa restrizione implica che all'interno di $X_{1}$ alcuni elementi non
 vengano computati. Per ovviare a questo inconveniente è stato deciso di
-assegnare ad ogni cellula uno stato locale $\{Alive, Inactive, Remove\}$
-indicatore del fatto che la cellula
+assegnare ad ogni cellula uno stato locale
+$\sigma \in \{Alive, Inactive, Remove\}$ indicatore del fatto che la cellula
 può oppure non può più procedere ulteriormente con la divisione.
 \\
 Sia $\sigma$ l'array degli stati di ogni cellula, allora è possibile riassumere
 l'assegnazione degli stati come segue
-$$\tau[X_{1, (2 * i)}] = \tau[X_{0, i}] + \mu[X_{0, i}] \leqslant \tau_{max}
+$$\tau[X_{0, i}] + \mu[X_{0, i}] \leqslant \tau_{max}
 \longrightarrow \sigma[X_{1, (2 * i)}] = \sigma[X_{1, (2 * i + 1)}] = Alive$$
-$$\tau[X_{1, (2 * i)}] = \tau[X_{0, i}] + \mu[X_{0, i}] \geqslant \tau_{max}
+$$\tau[X_{0, i}] + \mu[X_{0, i}] \geqslant \tau_{max}
 \longrightarrow \sigma[X_{1, (2 * i)}] = Inactive \land
 \sigma[X_{1, (2 * i + 1)}] = Remove$$
-$$\varphi[X_{1, (2 * i)}] = \varphi[X_{0, i}] / 2 \leqslant \varphi_{min}
+$$\varphi[X_{0, i}] / 2 \leqslant \varphi_{min}
 \longrightarrow \sigma[X_{1, (2 * i)}] = \sigma[X_{1, (2 * i + 1)}] = Remove$$
 
-Una volta che il Kernel ha terminato l'esecuzione di tutti i thread, il
+Una volta che il kernel ha terminato l'esecuzione di tutti i thread, il
 controllo passa nuovamente alla CPU.
 L'implementazione del metodo a stati risulta essere necessario poiché a seguito
 dell'evento di proliferazione cellulare
@@ -160,7 +160,7 @@ all'implementazione Python.
 \\
 NVIDIA dalla versione \textit{5.0} di CUDA e su architetture hardware a partire
 dalla versione \textit{compute\_35} ha introdotto la possibilità di invocare
-l'esecuzione di un Kernel direttamente dal codice destinato ad un altro Kernel.
+l'esecuzione di un kernel direttamente dal codice destinato ad un altro kernel.
 Questa pratica è definita
 \textit{Parallelismo Dinamico}\cite{jones2012introduction} in quanto permette
 di computare strutture intrinsecamente ricorsive, come nel caso del
@@ -178,7 +178,7 @@ in seguito invece di terminare l'iterazione e aggiornare l'array dei risultati
 $P$, è possibile calcolare gli array successivi $X_{2}...X_{n}$ suddividendoli
 a loro volta in thread block, ovvero sincronizzare i thread tramite la
 primitiva \textit{\_\_syncthreads()} e successivamente invocare l'esecuzione di
-un nuovo Kernel utilizzando però $2$ thread block invece che $1$ dato che dal
+un nuovo kernel utilizzando però $2$ thread block invece che $1$ dato che dal
 thread block sincronizzato che si sta prendendo in considerazione sono state
 generate $2 * 2^{10}$ cellule appartenenti alla nuova popolazione.
 
@@ -255,7 +255,7 @@ cellule $\{0, 1\} \subseteq X_{0}$ si occupa di
 computare le figlie risultanti dalla divisione, ovvero
 $\{0, 1, 2, 3\} \subseteq X_{1}$.
 Al termine della computazione di $B_{0,0}$, viene invocata la primitiva 
-\textit{\_\_syncthreads()} ed eseguito un nuovo Kernel, che istanzierà
+\textit{\_\_syncthreads()} ed eseguito un nuovo kernel, che istanzierà
 i blocchi $B_{1,0} = \{0, 1\}$ e $B_{1,1} = \{2, 3\}$, che a loro volta
 eseguiranno $B_{2,0} = \{0, 1\}$, $B_{2,1} = \{2, 3\}$,
 $B_{2,2} = \{4, 5\}$ e $B_{2,3} = \{6, 7\}$.
@@ -306,8 +306,8 @@ particolarmente onerosi.
 \paragraph{Bounding}\mbox{}
 \\
 Sebbene il parallelismo dinamico introduca un enorme vantaggio, porta con sè
-una limitazione importante, ovvero il fatto che un Kernel non termina la sua
-esecuzione fino a quando tutti i Kernel invocati da quest'ultimo non sono
+una limitazione importante, ovvero il fatto che un kernel non termina la sua
+esecuzione fino a quando tutti i kernel invocati da quest'ultimo non sono
 anch'essi terminati. Durante la computazione degli alberi questo può portare
 ad alcuni rallentamenti, poiché è inutile computare rami le cui cellule
 sono state marcate come $Inactive$ o $Remove$ dato che non contribuiscono
@@ -317,9 +317,9 @@ Utilizzando la Shared Memory\cite{sanders2010cuda}
 uno stesso thread block, è possibile
 settare un flag indicante l'avvenuto evento di proliferazione
 cellulare. Se ci si trovasse nel caso in cui nessun evento si è verificato,
-sarebbe inutile invocare un nuovo Kernel, di conseguenza
+sarebbe inutile invocare un nuovo kernel, di conseguenza
 la computazione dei successivi sotto-alberi viene interrotta per consentire
-la preventiva terminazione dei Kernel precedenti.
+la preventiva terminazione dei kernel precedenti.
 \\
 Siano $A = Alive$, $I = Inactive$, $R = Remove$, allora il metodo implementato
 produce i risultati rappresentati in figura \ref{fig:tree-bounding}.

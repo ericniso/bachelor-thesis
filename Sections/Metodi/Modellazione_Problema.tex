@@ -56,7 +56,8 @@
         };
 \end{tikzpicture}
 \caption{Fenomeno di divisione cellulare rappresentato tramite albero
-    binario bilanciato}
+    binario bilanciato dove ogni nodo possiede un valore di fluorescenza
+    $\varphi_{i}$ dimezzato rispetto al nodo precedente}
 \label{fig:proliferation-tree}
 \end{figure}
 La simulazione del fenomeno prevede la creazione di una popolazione iniziale
@@ -85,8 +86,8 @@ divisione, le quali radici definiscono un insieme di primo livello di cellule
 proliferanti e di conseguenza ogni livello successivo degli alberi rappresenterà
 un nuovo stadio di proliferazione cellulare avente popolazione con numerosità
 uguale a $L * 2^{i}$ con $i$ indicante il livello preso in considerazione.
-Quindi se il primo livello dell'albero corrisponde all'array di $X_{0}$,
-allora anche ad ogni livello successivo corrisponde un array $X_{n}$ i quali
+Ne consegue che se il primo livello dell'albero corrisponde a $X_{0}$,
+allora ad ogni livello successivo corrisponde un array $X_{n}$ i quali
 elementi sono le nuove cellule ottenute dalla divisione cellulare avvenuta a 
 partire da $X_{n-1}$.
 In definitiva la totalità dei fenomeni di proliferazione è descritta da un
