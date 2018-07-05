@@ -4,9 +4,9 @@ La popolazione di cellule è modellata tramite un array, una delle strutture
 dati più adatte ad essere parallelizzate su GPU, dato che è possibile
 demandare la computazione di ogni elemento dell'array ad uno specifico thread.
 Sia la creazione che la simulazione della proliferazione fanno uso solamente di
-array unidimensionali, dunque il problema si riduce all'implementazione di un
+array unidimensionali, dunque l'obiettivo è l'implementazione di un
 algoritmo in grado di massimizzare il parallelismo necessario alla computazione
-dell'insieme di array atto a portare a termine la simulazione. 
+dell'insieme di array utile a portare a termine la simulazione. 
 
 % Descrizione della creazione della popolazione iniziale partendo dal file
 % dell'istogramma di partenza
@@ -20,7 +20,7 @@ Ora che è nota la frequenza $\psi_{i}$ per ogni fluorescenza $\varphi_{i}$,
 è possibile invocare l'esecuzione di un kernel per ogni coppia di
 valori 
 in modo tale che ogni thread si occupi di generare una cellula avente
-$\varphi_{i}$ valore di fluorescenza come rappresentato in figura
+$\varphi_{i}$ valore di fluorescenza come rappresentato in Figura
 \ref{fig:population-creation}.
 \\
 \begin{figure}[h]
@@ -233,11 +233,11 @@ generate $2 * 2^{10}$ cellule appartenenti alla nuova popolazione.
     \end{minipage}
     \caption{Rappresentazione di due alberi di proliferazione, le cui radici
         rappresentano le cellule appartenenti alla popolazione iniziale $X_{0}$
-        mentre ogni livello comprende nodi raffiguranti cellule appartenenti
+        mentre ogni livello comprende nodi rafFiguranti cellule appartenenti
         a nuove popolazioni cellulari}
     \label{fig:prolif-tree}
 \end{figure}
-In figura \ref{fig:prolif-tree} sono raffigurati due alberi di proliferazione,
+In Figura \ref{fig:prolif-tree} sono rafFigurati due alberi di proliferazione,
 dove ogni nodo
 rappresenta l'indice di una cellula all'interno dell'array della popolazione
 corrispondente al livello degli alberi considerato, come segue:
@@ -293,7 +293,7 @@ popolazione iniziale $X_{0}$ ino a raggiungere il termine della simulazione.
     tempo massimo di proliferazione $\tau_{max}$}
     \label{chart:original-dynamic}
 \end{figure}
-Dal grafico in figura \ref{chart:original-dynamic} è possibile vedere
+Dal grafico in Figura \ref{chart:original-dynamic} è possibile vedere
 l'aumento significativo delle
 performance rispetto alla versione che non presenta l'utilizzo del
 parallelismo dinamico. Questo è dovuto al fatto che la
@@ -322,7 +322,7 @@ la computazione dei successivi sotto-alberi viene interrotta per consentire
 la preventiva terminazione dei kernel precedenti.
 \\
 Siano $A = Alive$, $I = Inactive$, $R = Remove$, allora il metodo implementato
-produce i risultati rappresentati in figura \ref{fig:tree-bounding}.
+produce i risultati rappresentati in Figura \ref{fig:tree-bounding}.
 Come è possibile notare,
 l'albero risultante dall'applicazione del
 bounding presenta un numero inferiore nodi, ciò equivale al fatto di risparmiare
@@ -391,11 +391,11 @@ simulazione.
     $\tau_{max}$}
     \label{chart:dynamic-bounding}
 \end{figure}
-In entrambe la versioni dell'algoritmo mostrate nel grafico in figura
+In entrambe la versioni dell'algoritmo mostrate nel grafico in Figura
 \ref{chart:dynamic-bounding} si nota che il tempo di simulazione
 rimane costante anche al crescere del limite $\tau_{max}$ grazie al parallelismo
 dinamico implementato in precedenza.
-Il leggero aumento delle prestazioni mostrato in figura
+Il leggero aumento delle prestazioni mostrato in Figura
 \ref{chart:dynamic-bounding} indica che la tecnica
 del bounding ha poco impatto sull'aumento delle performance, ma
 sicuramente contribuisce alla migliore gestione delle risorse computazionali
@@ -473,7 +473,7 @@ per portare a termine la simulazione mediante una sola iterazione.
 Essendo però un processo di tipo stocastico, è possibile che il valore calcolato
 $\eta$ non rispecchi a pieno la realtà che si vuole simulare.
 \\
-Nel grafico in figura \ref{chart:bounding-inference} si può notare un
+Nel grafico in Figura \ref{chart:bounding-inference} si può notare un
 incremento di prestazioni fino
 ad un valore di $\tau_{max}$ di $720$, questo perché sebbene venga applicata
 l'inferenza dei parametri, l'algoritmo prevede l'istanziamento di $\eta$
@@ -521,7 +521,7 @@ la frequenza riguardante i valori di fluorescenza delle cellule $Inactive$
 Mediante questa tecnica la $cudaMemcpy()$ viene utilizzata solamente a inizio
 e fine simulazione per il salvataggio dei risultati.
 \\
-Come si evince dal grafico in figura \ref{chart:inference-histogram}, 
+Come si evince dal grafico in Figura \ref{chart:inference-histogram}, 
 questo è l'accelerante che incrementa maggiormente
 le performance dell'algoritmo, dato che risolve quasi totalmente il problema
 del collo di bottiglia causato dal trasferimento bidirezionale delle informazioni
@@ -588,7 +588,7 @@ comunque presenti ancora all'interno delle diverse popolazioni, dato che
 dopo ogni iterazione la memoria non viene più filtrata in quanto non più
 trasferita sulla CPU.
 \\
-La crescita esponenziale dell'occupazione di memoria visibile in figura
+La crescita esponenziale dell'occupazione di memoria visibile in Figura
 \ref{chart:serial-parallel-histogram} potrebbe essere un
 problema nel momento in cui il tempo $\tau_{max}$ inizia a crescere
 ulteriormente. La soluzione immediata a questo problema potrebbe essere di

@@ -62,35 +62,35 @@
 \end{figure}
 La simulazione del fenomeno prevede la creazione di una popolazione iniziale
 di cellule basata su un istogramma fornito in input denominato $H(0)$
-contenente coppie di valori ($\varphi_{i}, \psi_{i}$),
-con $\varphi_{i} \in \R, \psi_{i} \in \N$ indicanti rispettivamente il
+contenente coppie di valori $(\varphi_{i}, \psi_{i}) \in H(0)$,
+con $i < |H(0)|$ e $\varphi_{i} \in \R, \psi_{i} \in \N$
+indicanti rispettivamente il
 valore di fluorescenza rilevato dalle misurazioni in laboratorio e
 la frequenza con il quale esso si presenta all'interno dei campioni analizzati.
 \\
 La popolazione iniziale di cellule, denominata $X_{0}$, è rappresentabile
 tramite un array di
 lunghezza $L$ pari alla seguente formula: 
-$$L = \sum_{i=1}^{|\varphi|} \psi_{i}$$
-$X_{0}$ è rappresentato in figura \ref{fig:population-array} dove si
+$$L = \sum_{(\varphi_{i}, \psi_{i}) \in H(0)} \psi_{i}$$
+$X_{0}$ è rappresentato in Figura \ref{fig:population-array} dove si
 può notare che ad ogni elemento
-di un sottoinsieme di dimensione $\psi_{i}$ viene assegnato il corrispondente
+appartenente a un sottoinsieme di dimensione $\psi_{i}$ viene assegnato il corrispondente
 valore di fluorescenza $\varphi_{i}$.
 Il fenomeno di divisione cellulare è modellabile tramite un albero binario 
 bilanciato
-come mostrato in figura \ref{fig:proliferation-tree}, dove ogni nodo rappresenta
+come mostrato in Figura \ref{fig:proliferation-tree}, dove ogni nodo rappresenta
 una cellula della popolazione con valore di fluorescenza $\varphi_{i}$
-dimezzato rispetto alla cellula dalla quale ha avuto origine, infine ogni
+dimezzato rispetto alla cellula dalla quale ha avuto origine e ogni
 ramo indica l'evento di proliferazione corrispondente.
-$X_{0}$ dà origine ad un insieme di $L$ alberi di
+$X_{0}$ dà origine a $L$ alberi di
 divisione, le quali radici definiscono un insieme di primo livello di cellule
 proliferanti e di conseguenza ogni livello successivo degli alberi rappresenterà
 un nuovo stadio di proliferazione cellulare avente popolazione con numerosità
-uguale a $L * 2^{i}$ con $i$ indicante il livello preso in considerazione.
-Ne consegue che se il primo livello dell'albero corrisponde a $X_{0}$,
-allora ad ogni livello successivo corrisponde un array $X_{n}$ i quali
+pari a $L * 2^{i}$ con $i$ indicante il livello preso in considerazione.
+Ne consegue che ad ogni livello $i > 0$ corrisponde un array $X_{i}$ i quali
 elementi sono le nuove cellule ottenute dalla divisione cellulare avvenuta a 
-partire da $X_{n-1}$.
+partire da $X_{i-1}$.
 In definitiva la totalità dei fenomeni di proliferazione è descritta da un
-insieme di array, dove ognuno racchiude tutte e sole le cellule
-corrispondenti ad uno specifico livello degli alberi di proliferazione generati
-a partire da $X_{0}$.
+insieme di array del tipo $X_{i}$ aventi come elementi tutte e sole le cellule
+corrispondenti ad uno specifico livello $i$ degli alberi di proliferazione
+generati a partire da $X_{0}$.
