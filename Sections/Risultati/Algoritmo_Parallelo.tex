@@ -140,7 +140,7 @@ di nota per quanto riguarda i risultati che si vogliono ottenere.
 \end{figure}
 
 % Spiegazione dei metodi per accelerare la computazione
-\subsection{Acceleranti}
+\subsection{Tecniche di ottimizzazione}
 
 Sebbene la soluzione descritta in precedenza sia corretta, è tuttavia
 evidente la necessità di cercare di migliorare ulteriormente
@@ -151,7 +151,7 @@ rispetto alla versione procedurale dell'algoritmo.
 in CUDA fa ancora un utilizzo intensivo della CPU per quanto riguarda
 l'aggiornamento dei risultati tramite iterazione dell'array della
 popolazione $X_{n}$.
-Detto questo è necessario implementare alcuni acceleranti per
+Detto questo è necessario implementare alcune ottimizzazioni per
 incrementare le perfomance e rendere questa soluzione preferibile rispetto
 all'implementazione Python.
 
@@ -284,11 +284,11 @@ popolazione iniziale $X_{0}$ ino a raggiungere il termine della simulazione.
             ]
             \addplot table[x=Time, y=Original] {Data/Accelerants/fit.txt};
             \addplot table[x=Time, y=Dynamic] {Data/Accelerants/fit.txt};
-            \legend{Senza acceleranti, Parallelismo dinamico}
+            \legend{Senza ottimizzazioni, Parallelismo dinamico}
         \end{axis}
     \end{tikzpicture}
     \caption{Confronto dei tempi di esecuzione (in secondi) dell'algoritmo
-    parallelo fra la prima versione senza acceleranti e la versione
+    parallelo fra la prima versione senza ottimizzazioni e la versione
     che implementa il parallelismo dinamico, utilizzando differenti valori di
     tempo massimo di proliferazione $\tau_{max}$}
     \label{chart:original-dynamic}
@@ -404,7 +404,7 @@ quando un kernel padre invoca un kernel figlio,
 il padre dovrà attendere la fine di tutti i suoi kernel figli per
 poter procedere con l'esecuzione del codice e terminare a sua volta.
 Questa tecnica di bounding risulterà molto più utile in seguito, con
-l'implementazione dell'ultimo accelerante.
+l'implementazione dell'ultima tecnica di ottimizzazione.
 
 % Descrizione del metodo di inferenza della profondità dell'albero
 \paragraph{Inferenza del livello di profondità}\mbox{}
@@ -423,7 +423,7 @@ l'implementazione dell'ultimo accelerante.
         \end{axis}
     \end{tikzpicture}
     \caption{Confronto dei tempi di esecuzione (in secondi) dell'algoritmo
-    parallelo fra la versione che implementa gli acceleranti descritti fino al
+    parallelo fra la versione che implementa le ottimizzazioni descritte fino al
     metodo del bounding
     e la versione che oltre a quest'ultimo utilizza anche l'inferenza del numero
     di livelli necessari alla simulazione,
@@ -522,7 +522,7 @@ Mediante questa tecnica la $cudaMemcpy()$ viene utilizzata solamente a inizio
 e fine simulazione per il salvataggio dei risultati.
 \\
 Come si evince dal grafico in Figura \ref{chart:inference-histogram}, 
-questo è l'accelerante che incrementa maggiormente
+questa è la tecnica di ottimizzazione che incrementa maggiormente
 le performance dell'algoritmo, dato che risolve quasi totalmente il problema
 del collo di bottiglia causato dal trasferimento bidirezionale delle informazioni
 per l'avanzamento della simulazione.
@@ -540,7 +540,7 @@ per l'avanzamento della simulazione.
         \end{axis}
     \end{tikzpicture}
     \caption{Confronto dei tempi di esecuzione (in secondi) dell'algoritmo
-    parallelo fra la versione che implementa gli acceleranti descritti fino al
+    parallelo fra la versione che implementa le ottimizzazioni descritte fino al
     metodo dell'inferenza dei parametri
     e la versione che oltre a quest'ultimo implementa anche il calcolo parallelo
     dell'istogramma finale,
@@ -573,8 +573,9 @@ per l'avanzamento della simulazione.
     \label{chart:serial-parallel-histogram} 
 \end{figure}
 
-L'implementazione degli acceleranti ha migliorato di gran lunga le
-performance dell'algoritmo, ma ha introdotto un problema, ovvero la crescita
+L'implementazione delle tecniche di ottimizzazione descritte in precedenza
+ha migliorato di gran lunga
+le performance dell'algoritmo, ma ha introdotto un problema, ovvero la crescita
 esponenziale della memoria.
 Infatti data la numerosità $L$ della popolazione iniziale $X_{0}$, essa cresce
 esponenzialmente con il numero dei livelli dell'albero $L * 2^i$ con
@@ -582,7 +583,7 @@ $i \in \N, i > 0$. Inizialmente questa crescita era mitigata dal fatto che
 dopo ogni iterazione la popolazione veniva filtrata, quindi procedendo verso
 il termine della simulazione, l'utilizzo di memoria veniva bilanciato dalla
 poca numerosità delle cellule $Alive$ rimanenti.
-Dopo l'introduzione dell'ultimo accelerante, sebbene le cellule $Inactive$ e
+Dopo l'introduzione dell'ultima ottimizzazione, sebbene le cellule $Inactive$ e
 $Remove$ non vengano prese in considerazione per la computazione, sono
 comunque presenti ancora all'interno delle diverse popolazioni, dato che
 dopo ogni iterazione la memoria non viene più filtrata in quanto non più
