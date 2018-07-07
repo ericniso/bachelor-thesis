@@ -12,8 +12,10 @@
                 ylabel={frequenza cellule},
                 xlabel={valori di fluorescenza}
                 ]
-            \addplot+[ybar interval,mark=no] table {Data/Final/fit_cuda.txt};
-            \addplot+[ybar interval,mark=no] table {Data/Final/fit_cpu.txt};
+            \addplot+[ybar interval,mark=no]
+                table {Data/Final/fit_cuda.txt};
+            \addplot+[ybar interval,mark=no,opacity=0.5]
+                table {Data/Final/fit_cpu.txt};
             \legend{CUDA, Python}
         \end{axis}
         \end{tikzpicture}
@@ -33,10 +35,10 @@
                 ylabel={frequenza cellule},
                 xlabel={valori di fluorescenza}
                 ]
-            \addplot+[ybar interval,mark=no] table
-                {Data/Final/validation_cuda.txt};
-            \addplot+[ybar interval,mark=no] table
-                {Data/Final/validation_cpu.txt};
+            \addplot+[ybar interval,mark=no]
+                table {Data/Final/validation_cuda.txt};
+            \addplot+[ybar interval,mark=no,opacity=0.5]
+                table {Data/Final/validation_cpu.txt};
                 \legend{CUDA, Python}
         \end{axis}
         \end{tikzpicture}
@@ -57,8 +59,10 @@
                 ylabel={frequenza cellule},
                 xlabel={valori di fluorescenza}
                 ]
-            \addplot+[ybar interval,mark=no] table {Data/Final/fit_cuda.txt};
-            \addplot+[ybar interval,mark=no] table {Data/Final/fit_target.txt};
+            \addplot+[ybar interval,mark=no]
+                table {Data/Final/fit_cuda.txt};
+            \addplot+[ybar interval,mark=no,opacity=0.5]
+                table {Data/Final/fit_target.txt};
             \legend{CUDA, Laboratorio}
         \end{axis}
         \end{tikzpicture}
@@ -81,10 +85,10 @@
                 ylabel={frequenza cellule},
                 xlabel={valori di fluorescenza}
                 ]
-            \addplot+[ybar interval,mark=no] table
-                {Data/Final/validation_cuda.txt};
-            \addplot+[ybar interval,mark=no] table
-                {Data/Final/validation_target.txt};
+            \addplot+[ybar interval,mark=no]
+                table {Data/Final/validation_cuda.txt};
+            \addplot+[ybar interval,mark=no,opacity=0.5]
+                table {Data/Final/validation_target.txt};
             \legend{CUDA, Laboratorio}
         \end{axis}
         \end{tikzpicture}
