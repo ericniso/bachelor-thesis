@@ -273,7 +273,7 @@ di 24 livelli di ricorsione. Questo limite ci costringe a dover
 eventualmente terminare la computazione di alcune popolazioni cellulari qualora
 rappresentino un livello di proliferazione superiore alla limitazione hardware,
 iterando nuovamente come se $X_{n}$ rappresentasse una nuova
-popolazione iniziale $X_{0}$ ino a raggiungere il termine della simulazione.
+popolazione iniziale $X_{0}$ fino a raino a raggiungere il termine della simulazione.
 
 \begin{figure}[t]
     \centering
@@ -500,7 +500,7 @@ L'obiettivo è quindi cercare di minimizzare il numero di trasferimenti tramite
 \textit{cudaMemcpy()}.
 \\
 La soluzione risiede nella possibilità di calcolare l'istogramma direttamente
-sulla GPU. Assumendo di conoscere un array ordinato in modo crescente$\Omega$
+sulla GPU. Assumendo di conoscere un array $\Omega$ ordinato in modo crescente
 contenente tutti possibili valori di fluorescenza
 $\varphi$ che una cellula potrà assumere in futuro, è possibile far eseguire
 ad un thread del kernel (se computando una cellula $Active$ essa non è più in
