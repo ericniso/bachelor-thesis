@@ -14,7 +14,7 @@ dell'insieme di array utile a portare a termine la simulazione.
 
 L'istogramma $H(0)$ che riporta i valori di fluorescenza con la rispettiva
 frequenza è salvato su un file di testo che deve essere letto in modo
-sequenziale. Una volta letto l'intero file sarà stato creato un array i cui
+sequenziale. Una volta letto l'intero file, viene creato un array i cui
 elementi saranno le coppie di valori $(\varphi_{i}, \psi_{i})$.
 Ora che è nota la frequenza $\psi_{i}$ per ogni fluorescenza $\varphi_{i}$,
 è possibile invocare l'esecuzione di un kernel per ogni coppia di
@@ -51,12 +51,13 @@ $\varphi_{i}$ valore di fluorescenza come rappresentato in Figura
 % Descrizione dell'avanzamento della simulazione
 \subsection{Simulazione della proliferazione cellulare}
 
-L'idea generale è che dato l'array della popolazione iniziale $X_{0}$
-sia possibile per ogni elemento $X_{0,i}$ in esso contenuto sviluppare
-la simulazione creando due nuove cellule figlie per ogni cellula originaria.
+La popolazione iniziale $X_{0}$ contiene elementi $X_{0,i}$, ognuno dei quali 
+con  l'avanzamento della simulazione da origine a due nuovi elementi che 
+rappresentano le nuove cellule generate a seguito di un evento di divisione 
+cellulare.
 \\
-Per la simulazione viene invocato un Kkernel specifico.
-Sia $X_{0,i}$ un elemento dell'array iniziale
+Per la simulazione viene invocato un kernel specifico tale che $X_{0,i}$ sia 
+un elemento dell'array iniziale
 con $i < L$, a cui è associato un certo valore $\varphi_{j}$
 con $j < |\varphi|$ e sia $X_{1}$ un array rappresentante la nuova
 popolazione cellulare.
@@ -112,13 +113,15 @@ $Alive$.
 Terminate le iterazioni l'array $P$ conterrà tutte e sole le cellule che hanno
 superato il limite temporale $\tau_{max}$, dunque è possibile calcolare
 l'istogramma dei risultati utilizzando la funzioni definite dalle librerie
-Thrust\cite{bell2011thrust} di CUDA e salvare il risultato ottenuto
+Thrust \cite{bell2011thrust} di CUDA e salvare il risultato ottenuto
 su file.
 \\
 Come è possibile notare dal grafico \ref{chart:python-cuda}, è presente un
 cospicuo aumento delle performance
-rispetto alla versione non parallela dell'algoritmo, ma non è ancora degno
-di nota per quanto riguarda i risultati che si vogliono ottenere.
+rispetto alla versione non parallela dell'algoritmo, ma non è ancora 
+sufficiente per quanto riguarda i risultati che si vogliono ottenere e per 
+giustificare la scelta di utilizzo di questa versione del simulatore a scapito 
+della versione implementata per CPU.
 \begin{figure}[t]
     \centering
     \begin{tikzpicture}
@@ -140,7 +143,7 @@ di nota per quanto riguarda i risultati che si vogliono ottenere.
 \end{figure}
 
 % Spiegazione dei metodi per accelerare la computazione
-\subsection{Tecniche di ottimizzazione}
+\subsection{Ottimizzazione dell'implementazione}
 
 Sebbene la soluzione descritta in precedenza sia corretta, è tuttavia
 evidente la necessità di cercare di migliorare ulteriormente
@@ -162,9 +165,9 @@ NVIDIA dalla versione \textit{5.0} di CUDA e su architetture hardware a partire
 dalla versione \textit{compute\_35} ha introdotto la possibilità di invocare
 l'esecuzione di un kernel direttamente dal codice destinato ad un altro kernel.
 Questa pratica è definita
-\textit{Parallelismo Dinamico}\cite{jones2012introduction} in quanto permette
+\textit{Parallelismo Dinamico} \cite{jones2012introduction} in quanto permette
 di computare strutture intrinsecamente ricorsive, come nel caso del
-\textit{Radix sort}\cite{merrill2011high}.
+\textit{Radix sort} \cite{merrill2011high}.
 \\
 L'idea è utilizzare il parallelismo dinamico per computare non solo il primo
 livello degli alberi di proliferazione cellulare, ma proseguire attraverso i
@@ -172,7 +175,7 @@ livelli successivi fino al termine della simulazione.
 Per effettuare questa operazione è necessario sfruttare al massimo il concetto di
 thread block dato che CUDA offre la possibilità di sincronizzare
 tutti i thread appartenenti ad un blocco tramite la primitiva
-\textit{\_\_syncthreads()}\cite{jones2012introduction}.
+\textit{\_\_syncthreads()} \cite{jones2012introduction}.
 L'array $X_{1}$ viene computato da un numero $\ceil*{L/2^{10}}$ di thread block,
 in seguito invece di terminare l'iterazione e aggiornare l'array dei risultati
 $P$, è possibile calcolare gli array successivi $X_{2}...X_{n}$ suddividendoli
@@ -372,40 +375,15 @@ simulazione.
     del bounding}
 \label{fig:tree-bounding}
 \end{figure}
-\begin{figure}[t]
-    \centering
-    \begin{tikzpicture}
-        \begin{axis}[legend pos=outer north east,
-                xtick=data,
-                xlabel={$\tau_{max}$},
-                ylabel={tempo simulazione (s)}
-            ]
-            \addplot table[x=Time, y=Dynamic] {Data/Accelerants/fit.txt};
-            \addplot table[x=Time, y=Bounding] {Data/Accelerants/fit.txt};
-            \legend{Parallelismo, Bounding}
-        \end{axis}
-    \end{tikzpicture}
-    \caption{Confronto dei tempi di esecuzione (in secondi) dell'algoritmo
-    parallelo fra la versione che implementa solamente il parallelismo dinamico
-    e la versione che oltre a quest'ultimo fa uso anche del metodo del bounding,
-    utilizzando differenti valori di tempo massimo di proliferazione
-    $\tau_{max}$}
-    \label{chart:dynamic-bounding}
-\end{figure}
-In entrambe la versioni dell'algoritmo mostrate nel grafico in Figura
-\ref{chart:dynamic-bounding} si nota che il tempo di simulazione
-rimane costante anche al crescere del limite $\tau_{max}$ grazie al parallelismo
-dinamico implementato in precedenza.
-Il leggero aumento delle prestazioni mostrato in Figura
-\ref{chart:dynamic-bounding} indica che la tecnica
-del bounding ha poco impatto sull'aumento delle performance, ma
-sicuramente contribuisce alla migliore gestione delle risorse computazionali
-relative alla GPU e all'uso intensivo del parallelismo dinamico. Infatti
+L'aumento delle performance ottenuto tramite il bounding non è significativo,
+ma questo tipo di ottimizzazione migliora la gestione delle risorse 
+computazionali relative alla GPU, in particolare all'utilizzo della memoria
+dopo l'implementazione del parallelismo dinamico. Infatti
 quando un kernel padre invoca un kernel figlio,
 il padre dovrà attendere la fine di tutti i suoi kernel figli per
 poter procedere con l'esecuzione del codice e terminare a sua volta.
 Questa tecnica di bounding risulterà molto più utile in seguito, con
-l'implementazione dell'ultima tecnica di ottimizzazione.
+l'implementazione dell'ultima tecnica di ottimizzazione del simulatore.
 
 % Descrizione del metodo di inferenza della profondità dell'albero
 \paragraph{Inferenza del livello di profondità}\mbox{}
@@ -453,8 +431,8 @@ appartenente ad $X_{0}$ al fine di portare a termine la simulazione.
 Un altro metodo risulta essere la possibilità di inferire il numero dei livelli
 necessari utilizzando i parametri forniti in ingresso alla simulazione.
 Per poter calcolare i diversi tipi di cellule, si utilizza un array di
-parametri contenente le distribuzioni uniformi $\pi$ dei vari tipi di cellule
-$\tau$ che è possibile avere all'interno della popolazione iniziale.
+parametri contenente le distribuzioni uniformi $\pi$ dei vari tipi di cellule 
+che è possibile avere all'interno della popolazione iniziale.
 Ogni tipo di cellula possiede un tempo medio $\mu$ dopo il quale avviene
 la divisione, il quale segue una distribuzione normale.
 È possibile pensare di utilizzare il tempo medio $\mu_{i}$ del tipo di cellula
@@ -487,7 +465,7 @@ dedicata a disposizione.
 
 % Descrizione della costruzione dell'istogramma finale
 \paragraph{Calcolo dell'istogramma finale}\mbox{}
-\\
+
 Sebbene le performance siano aumentate, il software fa ancora molto affidamento
 sulla CPU per il calcolo dell'istogramma finale.
 Ad ogni iterazione l'array della popolazione $X_{n}$ viene trasferito
@@ -527,6 +505,7 @@ questa è la tecnica di ottimizzazione che incrementa maggiormente
 le performance dell'algoritmo, dato che risolve quasi totalmente il problema
 del collo di bottiglia causato dal trasferimento bidirezionale delle informazioni
 per l'avanzamento della simulazione.
+
 \begin{figure}[t]
     \centering
     \begin{tikzpicture}
@@ -550,34 +529,15 @@ per l'avanzamento della simulazione.
     \label{chart:inference-histogram}
 \end{figure}
 
+\newpage
+
 % Descrizione del problema della gestione della memoria
 \subsection{Gestione della memoria}
 
-\begin{figure}[h]
-    \centering
-    \begin{tikzpicture}
-        \begin{axis}[legend pos=north west,
-                xtick=data,
-                xlabel={iterazioni dell'algoritmo},
-                ylabel={dimensione popolazione (MB)}
-            ]
-            \addplot table[x=Iteration, y=Serial] {Data/Memory/validation.txt};
-            \addplot table[x=Iteration, y=Parallel] {Data/Memory/validation.txt};
-            \legend{Istogramma seriale,Istogramma parallelo}
-        \end{axis}
-    \end{tikzpicture}
-    \caption{Confronto dell'utilizzo di memoria fra la versione dell'algoritmo
-        che prevede il calcolo seriale dell'istogramma con rimozione delle
-        cellule non $Alive$ e il calcolo parallelo dell'istogramma dei risultati
-        senza filtraggio della popolazione cellulare al termine di $n$ iterazioni
-        dell'algoritmo}
-    \label{chart:serial-parallel-histogram} 
-\end{figure}
-
-L'implementazione delle tecniche di ottimizzazione descritte in precedenza
+L'implementazione delle ottimizzazioni descritte in precedenza
 ha migliorato di gran lunga
 le performance dell'algoritmo, ma ha introdotto un problema, ovvero la crescita
-esponenziale della memoria.
+esponenziale delle risorse da allocare.
 Infatti data la numerosità $L$ della popolazione iniziale $X_{0}$, essa cresce
 esponenzialmente con il numero dei livelli dell'albero $L * 2^i$ con
 $i \in \N, i > 0$. Inizialmente questa crescita era mitigata dal fatto che
@@ -602,3 +562,23 @@ elaborarli nuovamente quando il primo sottoinsieme di popolazione è stato
 elaborato. Questo però introdurrebbe nuovamente la necessità di utilizzare
 in modo assiduo $cudaMemcpy()$, però fino ad ora pare essere l'unica soluzione
 plausibile.
+\begin{figure}[t]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[legend pos=north west,
+                xtick=data,
+                xlabel={iterazioni dell'algoritmo},
+                ylabel={dimensione popolazione (MB)}
+            ]
+            \addplot table[x=Iteration, y=Serial] {Data/Memory/validation.txt};
+            \addplot table[x=Iteration, y=Parallel] {Data/Memory/validation.txt};
+            \legend{Istogramma seriale,Istogramma parallelo}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Confronto dell'utilizzo di memoria fra la versione dell'algoritmo
+        che prevede il calcolo seriale dell'istogramma con rimozione delle
+        cellule non $Alive$ e il calcolo parallelo dell'istogramma dei risultati
+        senza filtraggio della popolazione cellulare al termine di $n$ iterazioni
+        dell'algoritmo}
+    \label{chart:serial-parallel-histogram} 
+\end{figure}

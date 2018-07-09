@@ -10,35 +10,38 @@
 
 L’evoluzione di popolazioni di cellule proliferanti risulta spesso estremamente
 difficile da caratterizzare mediante convenzionali tecniche di biologia
-sperimentale. Tuttavia, un’analisi approfondita di questi fenomeni
+sperimentale \cite{aml2018unimib}. Tuttavia, un’analisi approfondita di questi fenomeni
 faciliterebbe lo studio e la comprensione di diverse patologie umane.
 Per questa ragione, è necessario accoppiare metodologie computazionali 
 avanzate ai classici esperimenti di laboratorio. Nel caso particolare della 
 Leucemia Mieloide Acuta (LMA) si pensa che l'eterogeneità tra diverse 
 sottopopolazioni cellulari presenti all'interno del tumore giochi un ruolo 
 fondamentale per quanto riguarda la resistenza alle cure e il fatto che il 
-tumore possa ripresentarsi a seguito del completamento della terapia.
+tumore possa ripresentarsi a seguito del completamento della terapia \cite{aml2018unimib}.
 Per lo studio di questo fenomeno si può optare per un approccio model-driven 
-in modo da studiare le diverse dinamiche riguardanti la proliferazione di 
-popolazioni cellulari. L'obiettivo di questo stage è lo sviluppo di un 
+in modo da studiare le dinamiche riguardanti la proliferazione di 
+popolazioni cellulari \cite{aml2018unimib}. L'obiettivo di questo stage è lo sviluppo di un 
 simulatore di divisione cellulare in grado di tenere conto della presenza 
 di differenti tipi di popolazioni cellulari e della stocasticità degli eventi
-di divisione ad essi correlati. Utilizzando un simulatore software implementato 
-solamente tramite sviluppo su CPU è emerso l'elevato costo 
-computazionale necessario alla simulazione di eventi di divisione riguardanti 
-popolazioni cellulari di grandi dimensioni, a causa di ciò si è reso necessario 
+di divisione ad essi correlati. Le cellule si divono in maniera esponenziale, 
+quindi la simulazione di questi fenomeni comporta costi in termini di memoria 
+e tempo esponenziali, infatti utilizzando un simulatore implementato 
+solamente tramite sviluppo su Central Processing Unit (CPU) 
+è emerso l'elevato costo 
+computazionale necessario alla simulazione di popolazioni cellulari di grandi 
+dimensioni. A causa di ciò si è reso necessario 
 l'utilizzo di tecniche di accelerazione software per incrementare le 
 performance del simulatore. È stato scelto di sviluppare il software 
 mediante la libreria CUDA che dà la possibilità di sfruttare il parallelismo 
-offerto dalle Graphics Processing Units moderne per ottenere incrementi 
+offerto dalle Graphics Processing Units (GPU) moderne per ottenere incrementi 
 significativi delle performance delle simulazioni effettuate su modelli di 
 proliferazione cellulare riguardanti la LMA.
 Durante lo sviluppo del simulatore è stato implementato l'utilizzo del 
 parallelismo dinamico per simulare questi fenomeni 
 di divisione cellulare inerentemente ricorsivi, trovando immediato riscontro 
 positivo verificabile grazie al significativo incremento delle performance 
-del simulatore. Il confronto dei dati estrapolati dalle simulazioni effettuate
-tramite simulatore per CPU e la corrispondente versione parallela 
-sviluppata durante il periodo di stage hanno confermato la correttezza dei 
+del simulatore. Il confronto dei dati ottenuti dalle simulazioni effettuate
+tramite simulatore per CPU e dalla corrispondente versione parallela 
+sviluppata durante il periodo di stage hanno confermato la correttezza dei
 risultati ottenibili utilizzando la versione del software implementata con
 l'ausilio della libreria CUDA.

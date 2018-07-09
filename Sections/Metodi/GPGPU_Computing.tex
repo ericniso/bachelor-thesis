@@ -1,15 +1,14 @@
 \section{GPGPU Computing}
 
-Originariamente le Graphics Processing Units (GPU) sono state concepite
+Originariamente le GPU sono state concepite
 come co-processori il cui scopo
 era puramente l'elaborazione grafica, mentre le altre funzionalità
-non strettamente legate a questo ambito erano gestite dalla 
-Central Processing Unit (CPU).
+non strettamente legate a questo ambito erano gestite dalla CPU.
 In seguito si è diffuso l'utilizzo del parallelismo fornito dalle GPU
 per accelerare diversi tipi di software non riguardanti
 l'area della computer grafica, dando luogo al General-Purpose computing
 on Graphics Processing Units (GPGPU), cioè l'utilizzo di questo tipo di hardware
-per applicazioni non legate all'elaborazione grafica.
+per applicazioni non legate all'elaborazione grafica \cite{nickolls2010gpu}.
 Sebbene le GPU operino a frequenze molto inferiori rispetto alle CPU, il loro
 punto di forza risiede nella presenza di molte più unità di elaborazione
 (denominate core), in grado quindi di eseguire centinaia o migliaia di thread
@@ -69,8 +68,8 @@ all'interno della stessa macchina tra le GPU impiegate per l'elaborazione e la
 CPU. Questa è una caratteristica che differisce dai tipi di
 architetture MIMD più diffusi, come il Computer cluster e il Grid Computing.
 Nei Computer cluster i processori $P$ sono rappresentati da CPU singole
-(denominate nodi), come si può evince dalla Figura \ref{fig:cluster-grid},
-le quali che svolgono le elaborazioni e sono connesse tra loro da una
+(denominate nodi), come si può evincere dalla Figura \ref{fig:cluster-grid},
+le quali svolgono le elaborazioni e sono connesse tra loro da una
 rete telematica solitamente in fibra
 ottica per ridurre i ritardi nella comunicazione fra i nodi della rete.
 I nodi svolgono dunque le operazioni in parallelo rispetto a tutti gli altri,
@@ -78,7 +77,7 @@ comunicando tra loro attraverso la rete locale le informazioni necessarie al
 completamento dell'elaborazione assegnata al cluster. Questi cluster
 generalmente sono collocati all'interno dello stesso luogo
 (una stanza o un intero edificio), risentono dunque solamente del ritardo generato
-da una rete locale di computer ma non di quello generato da una
+da una rete locale di computer, ma non di quello generato da una
 possibile distribuzione geografica dei nodi di elaborazione, come nel caso
 del Grid computing. Questo modello rappresentato dalla Figura
 \ref{fig:cluster-grid} 

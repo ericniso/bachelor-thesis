@@ -1,5 +1,21 @@
 \section{Confronto con dati sperimentali}
 
+Lo scopo della simulazione è verificare la correttezza del modello utilizzato
+sulla base di dati reali provenienti da esperimenti effettuati in vivo
+in laboratorio.
+\\
+In Figura \ref{chart:comparison} è possibile vedere la comparazione tramite 
+overlap dei
+risultati ottenuti dalle simulazioni fra l'algoritmo di riferimento sviluppato
+in Python e la versione implementata in CUDA.
+Nei grafici sono presenti aree in cui
+i valori di frequenza si discostano tra loro di alcune unità. Questa variazione
+è dovuta al fatto che la simulazione deve elaborare eventi di tipo stocastico,
+dunque il numero di cellule aventi un determinato tipo e il timer di divisione
+non saranno mai esattamente uguali per ogni simulazione che si andrà ad
+effettuare, e questa situazione è appunto evidenziata dalle aree del grafico
+dove è assente l'overlap dei valori. 
+
 \begin{figure}[H]
     \begin{minipage}[b]{.5\linewidth}
         \centering
@@ -105,19 +121,3 @@
     iniziali}
     \label{chart:comparison}
 \end{figure}
-
-Lo scopo della simulazione è verificare la correttezza del modello utilizzato
-sulla base di dati reali provenienti da esperimenti effettuati in vivo
-in laboratorio.
-\\
-In Figura \ref{chart:comparison} è possibile vedere la comparazione tramite 
-overlap dei
-risultati ottenuti dalle simulazioni fra l'algoritmo di riferimento sviluppato
-in Python e la versione implementata in CUDA.
-Nei grafici sono presenti aree in cui
-i valori di frequenza si discostano tra loro di alcune unità. Questa variazione
-è dovuta al fatto che la simulazione deve elaborare eventi di tipo stocastico,
-dunque il numero di cellule aventi un determinato tipo e il timer di divisione
-non saranno mai esattamente uguali per ogni simulazione che si andrà ad
-effettuare, e questa situazione è appunto evidenziata dalle aree del grafico
-dove è assente l'overlap dei valori. 

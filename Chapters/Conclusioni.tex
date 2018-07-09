@@ -23,10 +23,14 @@ di profondità risulta quindi un'ottima soluzione quando si tratta di elaborare
 strutture dati predisposte alla ricorsione, come in questo caso. Sebbene CUDA
 preveda un limite fisico al numero di livelli di ricorsione disponibili, è
 degna di nota l'accelerazione fornita alla simulazione.
-L'aumento delle performance è evidente anche utilizzando i dati di test
-forniti, ma sarebbe interessante vedere a confronto il comportamento
-dell'algoritmo parallelo con quello sequenziale a fronte di una popolazione
-iniziale $X_{0}$ con numerosità di gran lunga più elevata, e a fronte
-di un tempo massimo di proliferazione $\tau_{max}$ molto distante.
-Gli sviluppi futuri prevedono l'ottimizzazione dell'utilizzo della memoria
-a fronte della crescita esponenziale della popolazione cellulare.
+Gli sviluppi futuri prevedono, a fronte della crescita esponenziale della 
+popolazione cellulare, l'ottimizzazione dell'utilizzo della memoria 
+tramite l'implementazione nel software di tecniche per la gestione di un numero 
+di GPU superiore ad uno, in quanto sarebbe possibile demandare la computazione 
+di sottopopolazioni cellulari ognuna ad una GPU dedicata, incrementando 
+ulteriormente le performance del simulatore. Inoltre sarebbe interessante 
+analizzarne lo speedup a fronte di una popolazione iniziale $X_{0}$ con 
+numerosità estremamente maggiore di quella utilizzata per le simulazioni 
+riportate nella Sezione \ref{sec:performance}, approssimativamente di $5*10^4$
+elementi.
+

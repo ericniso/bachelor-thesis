@@ -120,13 +120,12 @@ l'id globale del thread relativo al kernel eseguito bisogna avvalersi anche
 del numero di thread block richiesti durante l'invocazione del kernel,
 secondo la seguente relazione:
 $$\tau + (\beta * B)$$
-dove $B$ e $T$ sono rispettivamente il numero di thread block
-e il numero di thread per blocco che
-devono essere utilizzati e $\beta$ e $\tau$ sono gli id locali
-associati al thread block e
-al thread con $\beta < B$ e $\tau < T$.
+dove $\beta$ e $\tau$ sono gli id locali associati al thread block e al thread 
+con $\beta < B$ e $\tau < T$, mentre $B$ e $T$ rappresentano rispettivamente 
+il numero di thread block e il numero di thread per blocco che devono essere 
+utilizzati.
 \\
-Nel listato di codice \ref{threadid}, scritto in linguaggio di programmazione
+Nel Listato \ref{threadid}, scritto in linguaggio di programmazione
 CUDA C, è riportato un esempio di calcolo del
 thread id globale utilizzando gli id locali del thread e del blocco, dove
 \textit{threadIdx.x}, \textit{blockIdx.x} e \textit{blockDim.x} corrispondono
@@ -141,7 +140,7 @@ rispettivamente ai valori di $\tau$, $\beta$ e $B$.
 \paragraph{Gerarchie di memoria}\mbox{}
 \\
 Attraverso l'astrazione software CUDA mette a disposizione tre diverse
-tipologie di memorie\cite{kirk2007nvidia}:
+tipologie di memorie \cite{kirk2007nvidia}:
 
 \begin{itemize}
     \item registri: rappresentano la memoria privata di ogni singolo thread,
