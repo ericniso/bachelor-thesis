@@ -6,8 +6,8 @@ era puramente l'elaborazione grafica, mentre le altre funzionalità
 non strettamente legate a questo ambito erano gestite dalla CPU.
 In seguito si è diffuso l'utilizzo del parallelismo fornito dalle GPU
 per accelerare diversi tipi di software non riguardanti
-l'area della computer grafica, dando luogo al General-Purpose computing
-on Graphics Processing Units (GPGPU), cioè l'utilizzo di questo tipo di hardware
+l'area della computer grafica, dando luogo al GPGPU, cioè l'utilizzo di questo 
+tipo di hardware
 per applicazioni non legate all'elaborazione grafica \cite{nickolls2010gpu}.
 Sebbene le GPU operino a frequenze molto inferiori rispetto alle CPU, il loro
 punto di forza risiede nella presenza di molte più unità di elaborazione
@@ -46,50 +46,12 @@ Essendo la decentralizzazione un punto cardine
 di questo paradigma, è necessario introdurre anche il concetto di
 sincronizzazione fra processi, utilizzando lo scambio di messaggi o
 la memoria condivisa, dato che le macchine operano in modo asincrono.
-\begin{figure}[t]
-    \begin{minipage}[b]{.5\linewidth}
-        \centering
-        \includegraphics[scale=0.2]{cluster}
-        \subcaption{Schema Computer cluster \cite{hunter1995multi}}
-    \end{minipage}
-    \begin{minipage}[b]{.5\linewidth}
-        \centering
-        \includegraphics[scale=0.3]{grid}
-        \subcaption{Schema Grid computing \cite{foster2002grid}}
-    \end{minipage}
-    \caption{Esempio schematico di architetture MIMD:
-        Computer cluster e Grid computing}
-    \label{fig:cluster-grid}
-\end{figure}
 Sebbene sia possibile da parte di un'architettura MIMD emulare il modello
 SIMD eseguendo il medesimo set di istruzioni per ogni processore $P$, il
 principale vantaggio di SIMD in ambito GPGPU computing è il collegamento diretto
 all'interno della stessa macchina tra le GPU impiegate per l'elaborazione e la 
 CPU. Questa è una caratteristica che differisce dai tipi di
 architetture MIMD più diffusi, come il Computer cluster e il Grid Computing.
-Nei Computer cluster i processori $P$ sono rappresentati da CPU singole
-(denominate nodi), come si può evincere dalla Figura \ref{fig:cluster-grid},
-le quali svolgono le elaborazioni e sono connesse tra loro da una
-rete telematica solitamente in fibra
-ottica per ridurre i ritardi nella comunicazione fra i nodi della rete.
-I nodi svolgono dunque le operazioni in parallelo rispetto a tutti gli altri,
-comunicando tra loro attraverso la rete locale le informazioni necessarie al
-completamento dell'elaborazione assegnata al cluster. Questi cluster
-generalmente sono collocati all'interno dello stesso luogo
-(una stanza o un intero edificio), risentono dunque solamente del ritardo generato
-da una rete locale di computer, ma non di quello generato da una
-possibile distribuzione geografica dei nodi di elaborazione, come nel caso
-del Grid computing. Questo modello rappresentato dalla Figura
-\ref{fig:cluster-grid} 
-prevede che diversi enti ed organizzazioni mettano in condivisione risorse e
-dati per portare a termine la medesima finalità.
-I nodi delle risorse (sia hardware che softawre) possono essere
-dislocati anche geografimente in luoghi differenti, questo introduce il problema
-della sincronizzazione delle risorse necessarie a causa delle problematiche
-che la rete internet introduce, ma il vantaggio è la disponibilità di grandi
-quantità di dati e hardware per l'elaborazione degli stessi che non sarebbe
-possibile ottenere utilizzando un'architettura Cluster.
-
 \begin{figure}[t]
     \begin{minipage}[b]{.5\linewidth}
         \centering
@@ -104,7 +66,6 @@ possibile ottenere utilizzando un'architettura Cluster.
     \caption{Schemi di esecuzione di architetture SIMD e MIMD}
     \label{fig:simd-mimd}
 \end{figure}
-
 La Figura \ref{fig:simd-mimd} mostra i due diversi schemi di esecuzione
 delle architetture definite in precedenza, dove con $P$ è indicato il processore
 e con $M$ la memoria. Da notare il fatto che, come spiegato precedentemente,
