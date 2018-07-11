@@ -1,20 +1,18 @@
 \section{Confronto con dati sperimentali}
 
 Lo scopo della simulazione è verificare la correttezza del modello utilizzato
-sulla base di dati reali provenienti da esperimenti effettuati in vivo
-in laboratorio.
+sulla base di dati reali provenienti da esperimenti effettuati in laboratorio.
 \\
 In Figura \ref{chart:comparison} è possibile vedere la comparazione tramite 
 overlap dei
-risultati ottenuti dalle simulazioni fra l'algoritmo di riferimento sviluppato
-in Python e la versione implementata in CUDA.
+risultati ottenuti dalle simulazioni effettuate con l'algoritmo di riferimento 
+sviluppato in Python e la versione implementata in CUDA.
 Nei grafici sono presenti aree in cui
 i valori di frequenza si discostano tra loro di alcune unità. Questa variazione
 è dovuta al fatto che la simulazione deve elaborare eventi di tipo stocastico,
 dunque il numero di cellule aventi un determinato tipo e il timer di divisione
 non saranno mai esattamente uguali per ogni simulazione che si andrà ad
-effettuare, e questa situazione è appunto evidenziata dalle aree del grafico
-dove è assente l'overlap dei valori. 
+effettuare. 
 
 \begin{figure}[H]
     \begin{minipage}[b]{.5\linewidth}
@@ -38,7 +36,7 @@ dove è assente l'overlap dei valori.
         }
         \subcaption{Confronto simulazioni Python e CUDA con
         \\
-        $\varphi_{min}=11.0, \tau_{max}=240$}
+        $\varphi_{min}=11.0, \tau_{max}=240$ ore}
     \end{minipage}
     \begin{minipage}[b]{.5\linewidth}
         \centering
@@ -61,7 +59,7 @@ dove è assente l'overlap dei valori.
         }
         \subcaption{Confronto simulazioni Python e CUDA con
         \\
-        $\varphi_{min}=8.7, \tau_{max}=504$}
+        $\varphi_{min}=8.7, \tau_{max}=504$ ore}
     \end{minipage}
     \begin{minipage}[b]{.5\linewidth}
         \vspace{0.3cm}
@@ -83,11 +81,9 @@ dove è assente l'overlap dei valori.
         \end{axis}
         \end{tikzpicture}
         }
-        \subcaption{Confronto simulazione CUDA con
+        \subcaption{Confronto fra i dati sperimentali e la simulazione CUDA con
         \\
-        $\varphi_{min}=11.0, \tau_{max}=240$
-        \\
-        e dati sperimentali}
+        $\varphi_{min}=11.0, \tau_{max}=240$ ore}
     \end{minipage}
     \begin{minipage}[b]{.5\linewidth}
         \vspace{0.3cm}
@@ -109,11 +105,9 @@ dove è assente l'overlap dei valori.
         \end{axis}
         \end{tikzpicture}
         }
-        \subcaption{Confronto simulazione CUDA con
+        \subcaption{Confronto fra i dati sperimentali e la simulazione CUDA con
         \\
-        $\varphi_{min}=8.7, \tau_{max}=504$
-        \\
-        e dati sperimentali}
+        $\varphi_{min}=8.7, \tau_{max}=504$ ore}
     \end{minipage}
     \caption{Confronto dei valori di fluorescenza sperimentali ricavati in laboratorio e
     quelli ottenuti dalle simulazioni utilizzando

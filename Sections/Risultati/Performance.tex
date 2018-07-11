@@ -4,21 +4,22 @@
 
 L'implementazione di un modello ad albero per la parallelizzazione di eventi
 di proliferazione cellulare si è rivelata una tecnica efficiente per questo
-tipo di simulazione, in Figura \ref{chart:performance-results}
+tipo di simulazione. In Figura \ref{chart:performance-results}
 sono presenti i risultati ottenuti per
 quanto riguarda i tempi necessari alla computazione della simulazione
 modificando il parametro $\tau_{max}$.
 \\
-Come è possibile notare dal grafico in Figura \ref{chart:speedup} la scheda
+Come è possibile notare in Figura \ref{chart:speedup}, la scheda
 GTX 970 è più performante della Tesla K80. Questo è dato dal fatto che
 la GTX 970 possiede un clock di 1050 MHz, mentre la Tesla K80 solamente di
-562 MHz, dunque frequenza quasi dimezzata. Questo impatta leggermente sulle
+562 MHz, dunque frequenza quasi dimezzata. Questo influisce leggermente sulle
 performance a causa della ricerca binaria implementata nel calcolo
 dell'istogramma finale, dato che un thread deve eseguire un loop per la ricerca
 della fluorescenza $\varphi_{i}$ all'interno dell'array delle frequenze $\Omega$.
 Sebbene la ricerca binaria sia nell'ordine di $O(\log_{2}{n})$, con un clock
 minore si rischia di avere un leggero calo di performance rispetto a schede
 con clock maggiori.
+\\
 \begin{figure}[H]
     \begin{minipage}[b]{.5\linewidth}
         \centering
@@ -28,8 +29,8 @@ con clock maggiori.
                     xtick=data,
                     ymode=log,
                     log ticks with fixed point,
-                    xlabel={$\tau_{max}$},
-                    ylabel={tempo simulazione (s)}
+                    xlabel={$\tau_{max}$ (h)},
+                    ylabel={tempo di esecuzione (s)}
                 ]
                 \addplot table[x=Time, y=Python] {Data/Comparison/fit.txt};
                 \addplot table[x=Time, y=K80] {Data/Comparison/fit.txt};
@@ -48,8 +49,8 @@ con clock maggiori.
                     xtick=data,
                     ymode=log,
                     log ticks with fixed point,
-                    xlabel={$\tau_{max}$},
-                    ylabel={tempo simulazione (s)}
+                    xlabel={$\tau_{max}$ (h)},
+                    ylabel={tempo di esecuzione (s)}
                 ]
                 \addplot table[x=Time, y=Python] {Data/Comparison/validation.txt};
                 \addplot table[x=Time, y=K80] {Data/Comparison/validation.txt};
