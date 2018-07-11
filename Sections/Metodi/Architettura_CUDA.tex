@@ -12,7 +12,7 @@ presi nuovamente in carico dalla CPU.
 \\
 Questo nuovo tipo di paradigma ha trovato immediato seguito nel settore
 della ricerca scientifica, dato che ha contribuito in particolare alla nascita
-e al miglioramento di software per la simulazione di fenomi fisici e
+e al miglioramento di software per la simulazione di fenomeni fisici e
 biologici.
 
 \paragraph{Specifiche Hardware}\mbox{}
@@ -41,9 +41,9 @@ Dato che vengono periodicamente rilasciate nuove versione dell'architettura
 hardware delle schede, NVIDIA ha sviluppato delle API per dialogare con la GPU
 che sono indipendenti dall'architettura del device utilizzato, rendendo
 così possibile lo sviluppo di software portabile su tutte le schede che
-supportano CUDA. In generale la maggior parte di queste API è accessibile
+supportano CUDA. In generale, la maggior parte di queste API è accessibile
 attraverso tutte le GPU NVIDIA, altre però richiedono una determinata versione
-compute capability ovvero un indicatore che riassume le specifiche
+di ``compute capability'' ovvero un indicatore che riassume le specifiche
 generali del device e le sue caratteristiche, come ad esempio il parallelismo
 dinamico che è disponibile solamente su schede con compute capability maggiore
 di 3.5.
@@ -98,11 +98,12 @@ all'esecuzione del codice invocato.
     caption={Esempio di invocazione GPU kernel},
     style=custom]
     {Code/simple_kernel.c}
-Come è possibile notare nell'esempio di codice \ref{kernel}, si sta invocando
+Come è possibile notare nel Listato \ref{kernel}, scritto in linguaggio di 
+programmazione CUDA C, si sta invocando
 l'esecuzione di un kernel specificando l'utilizzo di 8 thread block e
-32 thread per blocco. In generale il numero totale di
+32 thread per blocco. In generale, il numero totale di
 thread che verranno utilizzati per la computazione del kernel è
-$$B * T$$ dove $B$ e $T$
+$$B * T,$$ dove $B$ e $T$
 sono rispettivamente
 il numero di thread block e il numero
 di thread per blocco che si vuole utilizzare.
@@ -119,8 +120,8 @@ dichiarare (nelle nuove versioni di CUDA è 1024), dunque per ottenere
 l'id globale del thread relativo al kernel eseguito bisogna avvalersi anche
 del numero di thread block richiesti durante l'invocazione del kernel,
 secondo la seguente relazione:
-$$\tau + (\beta * B)$$
-dove $\beta$ e $\tau$ sono gli id locali associati al thread block e al thread 
+$$\tau + (\beta * B),$$
+dove $\beta$ e $\tau$ sono gli id locali associati al thread block e al thread, 
 con $\beta < B$ e $\tau < T$, mentre $B$ e $T$ rappresentano rispettivamente 
 il numero di thread block e il numero di thread per blocco che devono essere 
 utilizzati.
@@ -150,16 +151,16 @@ tipologie di memorie \cite{kirk2007nvidia}:
     
     \item memoria condivisa: la velocità di accesso è pressoché simile a quella
         dei registri poiché anch'essa è presente all'interno del chip e viene
-        suddivisa fra i thread block schedulati sullo Streaming Multiprocessor,
-        rendendo possibile lo scambio di informazioni intra blocco evitando
+        suddivisa fra i thread block schedulati sullo SM,
+        rendendo possibile lo scambio di informazioni intra-blocco evitando
         in alcuni casi l'accesso alla memoria globale quando si tratta di
         utilizzare dati utili solamente all'elaborazione interna al
-        blocco stesso.
+        blocco stesso;
 
     \item memoria globale: è il tipo di memoria più lenta poiché non è presente
         direttamente all'interno del chip, ma è un'unità DRAM esterna con grande
         capacità di memorizzazione. Solitamente è utilizzata per le
-        comunicazioni inter block e per lo scambio di dati fra CPU e GPU.
+        comunicazioni inter-blocco e per lo scambio di dati fra CPU e GPU.
 \end{itemize}
 
 \paragraph{Gerarchie di esecuzione}\mbox{}
@@ -167,11 +168,11 @@ tipologie di memorie \cite{kirk2007nvidia}:
 Come descritto in precedenza, un kernel specifica un numero di thread che
 andranno ad elaborare i dati, questa operazione si traduce fisicamente
 nell'esecuzione dei thread appartenenti a un thread block su uno
-Streaming Multiprocessor. All'interno di uno SM possono risiedere
+SM. All'interno di uno SM possono risiedere
 diversi thread block (che non potranno essere migrati su altri SM)
 che verranno eseguiti in modo concorrente. Questa scelta è dovuta al fatto
-che così facendo è possibile utilizzare la memoria condivisa presente
-all'interno di ogni SM, infatti sia il file dei Registri che la Memoria
+che, così facendo, è possibile utilizzare la memoria condivisa presente
+all'interno di ogni SM, infatti sia il file dei registri che la memoria
 Condivisa vengono suddivisi equamente fra tutti i thread block in esecuzione
 su uno stesso SM, inoltre è disponibile la sincronizzazione fra thread
 appartenenti ad un thread block tramite la primitiva \textit{\_\_syncthreads()}.
