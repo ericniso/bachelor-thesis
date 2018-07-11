@@ -9,14 +9,15 @@
 %----------------------------------------------------------------------------------------
 
 I risultati ottenuti dalle simulazioni effettuate mediante
-l'utilizzo dell'algoritmo implementato in CUDA messi a confronto con i
-risultati del medesimo algoritmo codificato in Python hanno confermato
-la correttezza dell'algoritmo CUDA, dato che utilizza una struttura dati
-ad albero per l'elaborazione della simulazione, differentemente dalla versione
-Python che fa uso di una struttura a stack, più intuitiva da implementare e
-gestire. La scelta di questo tipo di strutture ad albero ha portato un enorme
+l'utilizzo dell'algoritmo implementato in CUDA, messi a confronto con i
+risultati del medesimo algoritmo codificato in Python, hanno confermato
+la correttezza dell'algoritmo CUDA. Differentemente dalla versione Python, che fa uso di una
+struttura a stack più intuitiva da implementare e gestire,
+l'algoritmo CUDA utilizza una struttura dati ad albero
+per l'elaborazione della simulazione. La scelta di questo tipo di strutture 
+ad albero ha portato un enorme
 vantaggio in termini prestazionali, poiché è stato scelto di implementare
-una soluzione che prevedesse l'utilizzo del parallelismo dinamico per
+una soluzione che prevedesse l'utilizzo del parallelismo dinamico ha permesso di
 verificare la validità di questa metodologia nella simulazione di fenomeni
 intrinsecamente ricorsivi. Il parallelismo dinamico con molti livelli
 di profondità risulta quindi un'ottima soluzione quando si tratta di elaborare
@@ -25,12 +26,12 @@ preveda un limite fisico al numero di livelli di ricorsione disponibili, è
 degna di nota l'accelerazione fornita alla simulazione.
 Gli sviluppi futuri prevedono, a fronte della crescita esponenziale della 
 popolazione cellulare, l'ottimizzazione dell'utilizzo della memoria 
-tramite l'implementazione nel software di tecniche per la gestione di un numero 
-di GPU superiore ad uno, in quanto sarebbe possibile demandare la computazione 
+tramite l'implementazione di tecniche per la gestione di un numero 
+di GPU superiore ad uno. Così facendo, sarebbe possibile demandare la computazione 
 di sottopopolazioni cellulari ognuna ad una GPU dedicata, incrementando 
-ulteriormente le performance del simulatore. Inoltre sarebbe interessante 
-analizzarne lo speedup a fronte di una popolazione iniziale $X_{0}$ con 
+ulteriormente le performance del simulatore. Inoltre, sarebbe interessante 
+analizzae lo speedup a fronte di una popolazione iniziale $X_{0}$ con 
 numerosità estremamente maggiore di quella utilizzata per le simulazioni 
 riportate nella Sezione \ref{sec:performance}, approssimativamente di $5*10^4$
-elementi.
+cellule.
 
