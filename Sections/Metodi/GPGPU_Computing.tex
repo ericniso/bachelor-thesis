@@ -5,9 +5,8 @@ come co-processori il cui scopo
 era puramente l'elaborazione grafica, mentre le altre funzionalità
 non strettamente legate a questo ambito erano gestite dalla CPU.
 In seguito si è diffuso l'utilizzo del parallelismo fornito dalle GPU
-per accelerare diversi tipi di software non riguardanti
-l'area della computer grafica, dando luogo al GPGPU, cioè l'utilizzo di questo 
-tipo di hardware
+per accelerare diversi tipi di software, dando luogo al GPGPU computing, 
+cioè l'utilizzo di questo tipo di hardware
 per applicazioni non legate all'elaborazione grafica \cite{nickolls2010gpu}.
 Sebbene le GPU operino a frequenze molto inferiori rispetto alle CPU, il loro
 punto di forza risiede nella presenza di molte più unità di elaborazione
@@ -16,12 +15,12 @@ in parallelo rispetto all'esiguo numero disponibile per la CPU.
 La tipologia di thread
 istanziabile dalla GPU è ottimizzata per garantire un basso overhead
 per quanto riguarda la loro creazione e uno scambio di contesto quasi
-istantaneo, evitando così un decadimento delle presentazioni dovuto al cospicuo
+istantaneo, evitando così una diminuzione delle presentazioni dovuta al cospicuo
 numero di thread generalmente sfruttati per risolvere un determinato task
 \cite{kirk2007nvidia}.
 \\
-In generale ad uno stream di dati di input corrisponde la creazione di un
-numero finito di thread per elaborare le informazioni ricevute e solitamente
+In generale, ad uno stream di dati di input corrisponde la creazione di un
+numero finito di thread per elaborare le informazioni ricevute, e solitamente
 ogni thread esegue le medesime istruzioni applicate ad un sottoinsieme
 dei dati. Un'architettura che opera secondo questo concetto è stata
 classificata da Michael J. Flynn con il termine di Single Instruction Multiple 
@@ -72,7 +71,7 @@ e con $M$ la memoria. Da notare il fatto che, come spiegato precedentemente,
 lo schema SIMD prevede che l'unità di controllo distribuisca ai processori $P$
 lo stream di istruzioni da eseguire elaborando le informazioni
 provenienti dallo stream di dati, utilizzando anche la memoria $M$ come supporto
-per lettura e scrittura di informazioni. Mentre nello schema MIMD si nota
+per lettura e scrittura di informazioni. Al contrario, nello schema MIMD si nota
 il diverso approccio adottato rispetto a SIMD, ovvero l'assenza di un'unità
 di controllo centrale e ogni processore $P$ che esegue
 uno stream di istruzioni differente l'uno dall'altro,
@@ -85,7 +84,7 @@ Sebbene le GPU aumentino le performance in maniera considerevole, questi
 vantaggi si ottengono nel momento in cui lo stream di dati assume
 una dimensione tale per cui l'overhead di creazione dei thread risulti
 irrisorio rispetto alla computazione che si deve andare ad effettuare.
-Ad esempio nel momento in cui vogliamo effettuare la ricerca di un valore
+Ad esempio, nel momento in cui vogliamo effettuare la ricerca di un valore
 specifico all'interno di un array, se la dimensione dell'input è di poche
 migliaia di elementi l'utilizzo della GPU risulta inutile poiché
 le moderne CPU possiedono frequenze elevate che favoriscono l'esecuzione
