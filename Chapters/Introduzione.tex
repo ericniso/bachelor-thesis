@@ -28,10 +28,9 @@ di differenti tipi di popolazioni cellulari e della stocasticità degli eventi
 di divisione ad essi correlati. Le cellule si divono in maniera esponenziale, 
 quindi la simulazione di questi fenomeni comporta costi in termini di memoria 
 e tempo esponenziali, infatti utilizzando un simulatore implementato 
-solamente tramite sviluppo su Central Processing Unit (CPU) 
-è emerso l'elevato costo 
+su Central Processing Unit (CPU) è emerso l'elevato costo 
 computazionale necessario alla simulazione di popolazioni cellulari di grandi 
-dimensioni. A causa di ciò si è reso necessario 
+dimensioni \cite{aml2018unimib}. A causa di ciò si è reso necessario 
 l'utilizzo di tecniche di accelerazione software per incrementare le 
 performance del simulatore. Esistono diverse metodologie e architetture il cui 
 obiettivo è l'incremento delle prestazioni dei software per cercare di ridurne
@@ -49,30 +48,30 @@ la risoluzione delle problematiche precedentemente elencate.
 \\
 Nei Computer cluster le elaborazioni sono svolte da CPU singole
 (denominate nodi) e distribuite su macchine di elaborazione fisicamente 
-differenti, come si può evincere dalla Figura \ref{fig:cluster-grid} 
+differenti, come si può evincere dalla Figura \ref{fig:cluster-grid} (a destra) 
 e utilizzano una rete locale per comunicare tra di loro. Questi cluster
 generalmente sono collocati all'interno dello stesso luogo
 (una stanza o un intero edificio), risentono dunque solamente del ritardo generato
 da una rete locale di computer. Solitamente questi cluster vengono utilizzati 
 per simulazioni che necessitano di enormi quantità di dati per essere svolte, 
-dunque la simulazione della proliferazione 
-cellulare sarebbe uno spreco di risorse di elaborazione nel momento in cui i 
+dunque per la simulazione della proliferazione 
+cellulare sarebbe uno spreco di risorse di elaborazione visto che i 
 dati di input sono dell'ordine dei megabyte (MB).
 \\
-Il Grid computing mostrato in Figura \ref{fig:cluster-grid}
+Il Grid computing, mostrato in Figura \ref{fig:cluster-grid} (a sinistra),
 prevede che diversi enti ed organizzazioni mettano in condivisione risorse e
 dati per portare a termine la medesima finalità.
 I nodi delle risorse (sia hardware che softawre) possono essere
-dislocati anche geografimente in luoghi differenti, 
+dislocati anche geografimente in luoghi differenti;
 il vantaggio è la disponibilità di grandi
 quantità di dati e hardware per l'elaborazione degli stessi che non sarebbe
 possibile ottenere utilizzando un'architettura Cluster. Anche in questo caso 
 l'utilizzo di questa tipologia di elaborazione non è conveniente per la 
-simulazione della proliferazione cellulare, poiché le informazioni necessarie 
-per l'avvio della simulazione sono già disponibili grazie alle analisi di 
-laboratorio.
+simulazione della proliferazione cellulare, poiché è necessaria 
+solamente la cooperazione con il laboratorio di analisi che fornisce i 
+dati necessari.
 \\
-Dunque per l'implementazione della nuova versione del simulatore è stato scelto 
+Per l'implementazione della nuova versione del simulatore è stato scelto 
 di sfruttare il paradigma del GPGPU computing, in quanto 
 necessita solamente di una Graphics Processing Unit (GPU) installata 
 all'interno di un computer. Il vantaggio è l'immediata disponibilità della 
@@ -92,17 +91,17 @@ computing.
         \subcaption{Schema Grid computing \cite{foster2002grid}}
     \end{minipage}
     \caption{Rappresentazione schematica del funzionamento di due architetture 
-        facenti parte della categoria dell'HPC: il Computer cluster e il 
-        Grid computing}
+        di HPC: Computer cluster e Grid computing}
     \label{fig:cluster-grid}
 \end{figure}
-Per sfruttare il GPGPU è stata sfruttata la tecnologia
+L'implementazione del GPGPU computing per lo sviluppo del simulatore è stata 
+resa possibile grazie alla tecnologia
 Computed Unified Device Architecture (CUDA) che offre la possibilità di 
 sfruttare il parallelismo offerto dalle GPU moderne per ottenere incrementi 
 significativi delle performance delle simulazioni effettuate su modelli di 
-proliferazione cellulare riguardanti la LMA.
-Durante lo sviluppo del simulatore è stato implementato l'utilizzo del 
-parallelismo dinamico per simulare questi fenomeni 
+proliferazione cellulare di LMA.
+Durante lo sviluppo del simulatore è stato utilizzato il 
+parallelismo dinamico per simulare i fenomeni 
 di divisione cellulare inerentemente ricorsivi, trovando immediato riscontro 
 positivo verificabile grazie al significativo incremento delle performance 
 del simulatore. Il confronto dei dati ottenuti dalle simulazioni effettuate
