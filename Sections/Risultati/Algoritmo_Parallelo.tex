@@ -498,8 +498,22 @@ influisce ulteriormente sullo speedup della simulazione.
 L'obiettivo è quindi cercare di minimizzare il numero di trasferimenti tramite
 \textit{cudaMemcpy()}.
 \\
-La soluzione risiede nella possibilità di calcolare l'istogramma direttamente
-sulla GPU. Assumendo di conoscere un array $\Omega$ ordinato in modo crescente
+Le librerie Thrust \cite{bell2011thrust} mettono a disposizione delle funzioni 
+per l'elaborazione parallela di istogrammi. Sebbene queste librerie siano 
+ottimizzate per fornire il miglior livello di performance possibile, le 
+funzioni disponibili al loro interno possono essere invocate solamente dalla 
+CPU e non dal codice adibito ad un kernel. Questa limitazione implica il fatto 
+che sarebbe necessario mantenere i risultati parziali di ogni iterazione 
+memorizzati all'interno della GPU, riducendo però lo spazio disponibile per 
+l'elaborazione delle iterazioni successive dell'algoritmo. Per evitare di 
+utilizzare la memoria della GPU per queste operazioni, si potrebbe pensare 
+di trasferire l'intera popolazione finale $X_{n}$ dell'iterazione 
+alla CPU; in questo modo però si ripresenterebbe lo stesso problema descritto 
+in precedenza, dato che sarebbe ancora necessario l'utilizzo intensivo 
+della funzione \textit{cudaMemcpy()}.
+Una possibile soluzione risiede nella possibilità di calcolare l'istogramma 
+direttamente sulla GPU senza utilizzare le librerie già implementate per CUDA.
+Assumendo di conoscere un array $\Omega$ ordinato in modo crescente
 contenente tutti i possibili valori di fluorescenza
 $\varphi$ che una cellula potrà assumere in futuro, è possibile far eseguire
 ad un thread del kernel (se computando una cellula $Active$ essa non è più in

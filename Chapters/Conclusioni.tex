@@ -30,8 +30,24 @@ tramite l'implementazione di tecniche per la gestione di un numero
 di GPU superiore ad uno. Così facendo, sarebbe possibile demandare la computazione 
 di sottopopolazioni cellulari ognuna ad una GPU dedicata, incrementando 
 ulteriormente le performance del simulatore. Inoltre, sarebbe interessante 
-analizzae lo speedup a fronte di una popolazione iniziale $X_{0}$ con 
+analizzare lo speedup a fronte di una popolazione iniziale $X_{0}$ con 
 numerosità estremamente maggiore di quella utilizzata per le simulazioni 
 riportate nella Sezione \ref{sec:performance}, approssimativamente di $5*10^4$
-cellule.
-
+cellule. Infine, si potrebbero utilizzare strutture dati
+differenti dagli array per rappresentare un insieme di alberi di 
+proliferazione; ad esempio sarebbe possibile implementare una matrice per 
+rappresentare la totalità delle popolazioni cellulari necessarie allo sviluppo 
+della simulazione. CUDA si presta bene anche al calcolo di questo tipo di 
+strutture, poiché è possibile suddividere un kernel in blocchi sia 
+bidimensionali che tridimensionali, e procedere dunque all'elaborazione 
+parallela di diverse popolazioni cellulari.
+Questo metodo però accentuerebbe maggiormente il problema di gestione della 
+memoria, poichè si dovrebbe allocare uno spazio di memoria all'interno della 
+GPU sufficiente a memorizzare una matrice di dimensioni $n * |X_{n}|$, con 
+$n$ uguale al numero massimo di livelli degli alberi di proliferazione, 
+richiedendo inutilmente risorse per la computazione di cellule non 
+facenti parte della popolazione considerata, dato che la popolazione $X_{0}$ 
+sarebbe composta da un numero esponenzialmente inferiore di cellule rispetto 
+alla popolazione finale $X_{n}$. Dunque la ricerca e 
+l'analisi di strutture dati adatte a rappresentare questa tipologia di 
+fenomeni potrebbe influire notevolmente sulle performance del simulatore.
