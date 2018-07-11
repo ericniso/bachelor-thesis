@@ -10,8 +10,8 @@ quanto riguarda i tempi necessari alla computazione della simulazione
 modificando il parametro $\tau_{max}$.
 \\
 Come è possibile notare in Figura \ref{chart:speedup}, la scheda
-GTX 970 è più performante della Tesla K80. Questo è dato dal fatto che
-la GTX 970 possiede un clock di 1050 MHz, mentre la Tesla K80 solamente di
+GTX Titan X è più performante della Tesla K80. Questo è dato dal fatto che
+la GTX Titan X possiede un clock di 1000 MHz, mentre la Tesla K80 solamente di
 562 MHz, dunque frequenza quasi dimezzata. Questo influisce leggermente sulle
 performance a causa della ricerca binaria implementata nel calcolo
 dell'istogramma finale, dato che un thread deve eseguire un loop per la ricerca
@@ -25,7 +25,7 @@ con clock maggiori.
         \centering
         \scalebox{0.6}{
         \begin{tikzpicture}
-            \begin{axis}[legend style={at={(0.95,0.4)}},
+            \begin{axis}[legend style={at={(0.95,0.6)}},
                     xtick=data,
                     ymode=log,
                     log ticks with fixed point,
@@ -34,7 +34,8 @@ con clock maggiori.
                 ]
                 \addplot table[x=Time, y=Python] {Data/Comparison/fit.txt};
                 \addplot table[x=Time, y=K80] {Data/Comparison/fit.txt};
-                \legend{CPU i5 2500,GPU Tesla K80}
+                \addplot table[x=Time, y=Titan] {Data/Comparison/fit.txt};
+                \legend{CPU i5 2500,GPU Tesla K80, GPU GTX Titan X}
             \end{axis}
         \end{tikzpicture}
         }
@@ -54,8 +55,8 @@ con clock maggiori.
                 ]
                 \addplot table[x=Time, y=Python] {Data/Comparison/validation.txt};
                 \addplot table[x=Time, y=K80] {Data/Comparison/validation.txt};
-                \addplot table[x=Time, y=970] {Data/Comparison/validation.txt};
-                \legend{CPU i5 2500,GPU Tesla K80,GPU GTX 970}
+                \addplot table[x=Time, y=Titan] {Data/Comparison/validation.txt};
+                \legend{CPU i5 2500,GPU Tesla K80,GPU GTX Titan X}
             \end{axis}
         \end{tikzpicture}
         }
@@ -86,7 +87,8 @@ con clock maggiori.
                 nodes near coords align={vertical},
             ]
             \addplot table[x=Time, y=K80] {Data/Speedup/fit.txt};
-            \legend{GPU Tesla K80}
+            \addplot table[x=Time, y=Titan] {Data/Speedup/fit.txt};
+            \legend{GPU Tesla K80,GPU GTX Titan X}
             \end{axis}
         \end{tikzpicture}
         }
@@ -110,8 +112,8 @@ con clock maggiori.
                 nodes near coords align={vertical},
             ]
             \addplot table[x=Time, y=K80] {Data/Speedup/validation.txt};
-            \addplot table[x=Time, y=970] {Data/Speedup/validation.txt};
-            \legend{GPU Tesla K80,GPU GTX 970}
+            \addplot table[x=Time, y=Titan] {Data/Speedup/validation.txt};
+            \legend{GPU Tesla K80,GPU GTX Titan X}
             \end{axis}
         \end{tikzpicture}
         }
