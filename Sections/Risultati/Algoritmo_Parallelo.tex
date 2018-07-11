@@ -30,6 +30,9 @@ inattive, dato che per queste cellule non si verifica mai un evento di
 divisione:
 
 \begin{itemize}
+    \item proporzione $\pi$ del tipo di cellula all'interno della popolazione: 
+        valore indicante il rapporto fra il numero di cellule
+        di un determinato tipo e $L$;
     \item intervallo medio di divisione: valore indicante il tempo in ore
         necessario per il verificarsi di un evento di divisione cellulare;
     \item deviazione standard dell'intervallo medio di divisione: deviazione 
@@ -40,6 +43,9 @@ una variabile timer $\mu$, derivata da una
 distribuzione normale, e utilizzata per incrementare il valore di una variabile 
 $\tau$ rappresentante il tempo di vita delle cellule generate da un 
 evento di divisione cellulare.
+\\
+Poichè $\mu$ è una variabile aleatoria, la simulazione degli eventi di 
+proliferazione sarà di tipo stocastico.
 \\
 \begin{figure}[h]
     \centering
@@ -174,7 +180,7 @@ in CUDA fa ancora un utilizzo intensivo della CPU per quanto riguarda
 l'aggiornamento dei risultati tramite iterazione dell'array della
 popolazione $X_{n}$.
 Detto questo è necessario implementare alcune ottimizzazioni per
-incrementare le perfomance e rendere questa soluzione preferibile rispetto
+incrementare le performance e rendere questa soluzione preferibile rispetto
 all'implementazione Python.
 
 % Descrizione del parallelismo dinamico
@@ -184,7 +190,7 @@ NVIDIA dalla versione \textit{5.0} di CUDA e su architetture hardware a partire
 dalla versione \textit{compute\_35} ha introdotto la possibilità di invocare
 l'esecuzione di un kernel direttamente dal codice destinato ad un altro kernel.
 Questa pratica è definita
-\textit{Parallelismo Dinamico} \cite{jones2012introduction} in quanto permette
+\textit{parallelismo dinamico} \cite{jones2012introduction}, in quanto permette
 di computare strutture intrinsecamente ricorsive, come nel caso del
 \textit{Radix sort} \cite{merrill2011high}.
 \\
@@ -195,14 +201,15 @@ Per effettuare questa operazione è necessario sfruttare al massimo il concetto 
 thread block dato che CUDA offre la possibilità di sincronizzare
 tutti i thread appartenenti ad un blocco tramite la primitiva
 \textit{\_\_syncthreads()} \cite{jones2012introduction}.
-L'array $X_{1}$ viene computato da un numero $\ceil*{L/2^{10}}$ di thread block,
-in seguito invece di terminare l'iterazione e aggiornare l'array dei risultati
-$P$, è possibile calcolare gli array successivi $X_{2}...X_{n}$ suddividendoli
-a loro volta in thread block, ovvero sincronizzare i thread tramite la
-primitiva \textit{\_\_syncthreads()} e successivamente invocare l'esecuzione di
-un nuovo kernel utilizzando però $2$ thread block invece che $1$ dato che dal
-thread block sincronizzato che si sta prendendo in considerazione sono state
-generate $2 * 2^{10}$ cellule appartenenti alla nuova popolazione.
+L'array $X_{1}$ viene computato da un numero $\ceil*{L/2^{10}}$ di thread 
+block; in seguito, invece di terminare l'iterazione e aggiornare l'array dei 
+risultati $P$, è possibile calcolare gli array successivi $X_{2} \dots X_{n}$,
+suddividendoli a loro volta in thread block, ovvero sincronizzare i thread 
+tramite la primitiva \textit{\_\_syncthreads()} e successivamente invocare 
+l'esecuzione di un nuovo kernel utilizzando però due thread block invece che 
+uno, dato che dal thread block sincronizzato che si sta prendendo in 
+considerazione sono state generate $2 * 2^{10}$ cellule appartenenti alla 
+nuova popolazione.
 
 \begin{figure}[t]
     \begin{minipage}[b]{.5\linewidth}
@@ -273,8 +280,8 @@ le seguenti popolazioni cellulari:
 
 Si denoti con $B_{i,j}$ un generico thread block dove
 $i$ rappresenta la popolazione $X_{i}$, mentre $j$ l'indice del blocco.
-Quindi $B_{0,0} = \{0, 1\}$ sarà il blocco che date le
-cellule $\{0, 1\} \subseteq X_{0}$ si occupa di
+Quindi $B_{0,0} = \{0, 1\}$ sarà il blocco che, date le
+cellule $\{0, 1\} \subseteq X_{0}$, si occupa di
 computare le figlie risultanti dalla divisione, ovvero
 $\{0, 1, 2, 3\} \subseteq X_{1}$.
 Al termine della computazione di $B_{0,0}$, viene invocata la primitiva 
@@ -283,11 +290,11 @@ i blocchi $B_{1,0} = \{0, 1\}$ e $B_{1,1} = \{2, 3\}$, che a loro volta
 eseguiranno $B_{2,0} = \{0, 1\}$, $B_{2,1} = \{2, 3\}$,
 $B_{2,2} = \{4, 5\}$ e $B_{2,3} = \{6, 7\}$.
 \\
-Questo metodo accelera di molto l'esecuzione dell'algoritmo, ma introduce un
-ulteriore problema: non è possibile conoscere ad inizio simulazione la
+Questo metodo accelera molto l'esecuzione dell'algoritmo, ma introduce un
+ulteriore problema: non è possibile conoscere all'inizio della simulazione la
 profondità esatta degli alberi di proliferazione necessaria a garantire lo
-svolgimento di tutti i fenomeni di divisione cellulare, dato che si tratta di
-una simulazione di tipo stocastico.
+svolgimento di tutti i fenomeni di divisione cellulare, a causa della 
+loro stocasticità.
 \\
 Un altro problema che è sorto è la limitazione hardware del parallelismo
 dinamico, dettata dal fatto che è possibile utilizzare solamente un massimo
@@ -296,22 +303,21 @@ eventualmente terminare la computazione di alcune popolazioni cellulari qualora
 rappresentino un livello di proliferazione superiore alla limitazione hardware,
 iterando nuovamente come se $X_{n}$ rappresentasse una nuova
 popolazione iniziale $X_{0}$ fino a raggiungere il termine della simulazione.
-
 \begin{figure}[t]
     \centering
     \begin{tikzpicture}
         \begin{axis}[legend pos=outer north east,
                 xtick=data,
-                xlabel={$\tau_{max}$},
-                ylabel={tempo simulazione (s)}
+                xlabel={$\tau_{max}$ (h)},
+                ylabel={tempo di esecuzione (s)}
             ]
             \addplot table[x=Time, y=Original] {Data/Accelerants/fit.txt};
             \addplot table[x=Time, y=Dynamic] {Data/Accelerants/fit.txt};
             \legend{Senza ottimizzazioni, Parallelismo dinamico}
         \end{axis}
     \end{tikzpicture}
-    \caption{Confronto dei tempi di esecuzione (in secondi) dell'algoritmo
-    parallelo fra la prima versione senza ottimizzazioni e la versione
+    \caption{Confronto dei tempi di esecuzione (in secondi) fra la prima 
+    versione dell'algoritmo parallelo senza ottimizzazioni e la versione
     che implementa il parallelismo dinamico, utilizzando differenti valori di
     tempo massimo di proliferazione $\tau_{max}$}
     \label{chart:original-dynamic}
@@ -335,7 +341,7 @@ anch'essi terminati. Durante la computazione degli alberi questo può portare
 ad alcuni rallentamenti, poiché è inutile computare rami le cui cellule
 sono state marcate come $Inactive$ o $Remove$ dato che non contribuiscono
 alla creazione del nuovo livello di proliferazione.
-Utilizzando la Shared Memory\cite{sanders2010cuda}
+Utilizzando la shared memory \cite{sanders2010cuda}
 , ovvero una zona di memoria condivisa tra tutti e soli i thread appartenenti ad
 uno stesso thread block, è possibile
 settare un flag indicante l'avvenuto evento di proliferazione
@@ -344,8 +350,8 @@ sarebbe inutile invocare un nuovo kernel, di conseguenza
 la computazione dei successivi sotto-alberi viene interrotta per consentire
 la preventiva terminazione dei kernel precedenti.
 \\
-Siano $A = Alive$, $I = Inactive$, $R = Remove$, allora il metodo implementato
-produce i risultati rappresentati in Figura \ref{fig:tree-bounding}.
+Siano $A = Alive$, $I = Inactive$, $R = Remove$, allora il metodo del bounding
+produce i risultati rappresentati in Figura \ref{fig:tree-bounding} (a destra).
 Come è possibile notare,
 l'albero risultante dall'applicazione del
 bounding presenta un numero inferiore nodi, ciò equivale al fatto di risparmiare
@@ -397,7 +403,7 @@ simulazione.
 L'aumento delle performance ottenuto tramite il bounding non è significativo,
 ma questo tipo di ottimizzazione migliora la gestione delle risorse 
 computazionali relative alla GPU, in particolare all'utilizzo della memoria
-dopo l'implementazione del parallelismo dinamico. Infatti
+dopo l'implementazione del parallelismo dinamico. Infatti,
 quando un kernel padre invoca un kernel figlio,
 il padre dovrà attendere la fine di tutti i suoi kernel figli per
 poter procedere con l'esecuzione del codice e terminare a sua volta.
@@ -407,39 +413,16 @@ l'implementazione dell'ultima tecnica di ottimizzazione del simulatore.
 % Descrizione del metodo di inferenza della profondità dell'albero
 \paragraph{Inferenza del livello di profondità}\mbox{}
 
-\begin{figure}[h]
-    \centering
-    \begin{tikzpicture}
-        \begin{axis}[legend pos=outer north east,
-                xtick=data,
-                xlabel={$\tau_{max}$},
-                ylabel={tempo simulazione (s)}
-            ]
-            \addplot table[x=Time, y=Bounding] {Data/Accelerants/fit.txt};
-            \addplot table[x=Time, y=Inference] {Data/Accelerants/fit.txt};
-            \legend{Bounding, Inferenza}
-        \end{axis}
-    \end{tikzpicture}
-    \caption{Confronto dei tempi di esecuzione (in secondi) dell'algoritmo
-    parallelo fra la versione che implementa le ottimizzazioni descritte fino al
-    metodo del bounding
-    e la versione che oltre a quest'ultimo utilizza anche l'inferenza del numero
-    di livelli necessari alla simulazione,
-    utilizzando differenti valori di tempo massimo di proliferazione
-    $\tau_{max}$}
-    \label{chart:bounding-inference}
-\end{figure}
-
-Sebbene CUDA ci ponga un livello massimo di nesting pari a 24 livelli,
-nei modelli presi in considerazione per queste simulazioni, difficilmente
-viene superata la soglia dei $5$ eventi di proliferazione per ogni cellula,
-ma la versione dell'algoritmo dopo l'implementazione del parallelismo dinamico
-prevede l'allocazione di $N$ livelli di proliferazione pari al numero massimo
-di cellule che è possibile mantenere sulla memoria dedicata alla GPU.
-Dunque se è presente sufficiente
+Sebbene CUDA ci ponga un livello massimo di ricorsione pari a 24,
+nei modelli di LMA presi in considerazione per queste simulazioni, difficilmente
+viene superata la soglia dei $5$ eventi di proliferazione per ogni cellula; 
+d'altra parte la versione dell'algoritmo dopo l'implementazione del 
+parallelismo dinamico prevede l'allocazione di $N$ livelli di proliferazione 
+pari al numero massimo di cellule che è possibile mantenere sulla memoria 
+dedicata alla GPU. Dunque, se è presente sufficiente
 spazio per allocare $10$ livelli di profondità essi vengono allocati,
 consumando più risorse del dovuto. Non è nemmeno possibile utilizzare
-la memoria di \textit{swap} dato che le GPU non supportano questa
+la memoria di \textit{swap}, dato che le GPU non supportano questa
 funzionalità.
 È necessario quindi trovare un modo per inferire nel modo più accurato
 possibile il numero di livelli necessari alla simulazione.
@@ -449,13 +432,8 @@ a patto che sia al corrente del numero medio di divisioni necessarie per ogni ce
 appartenente ad $X_{0}$ al fine di portare a termine la simulazione.
 Un altro metodo risulta essere la possibilità di inferire il numero dei livelli
 necessari utilizzando i parametri forniti in ingresso alla simulazione.
-Per poter calcolare i diversi tipi di cellule, si utilizza un array di
-parametri contenente le distribuzioni uniformi $\pi$ dei vari tipi di cellule 
-che è possibile avere all'interno della popolazione iniziale.
-Ogni tipo di cellula possiede un tempo medio $\mu$ dopo il quale avviene
-la divisione, il quale segue una distribuzione normale.
-È possibile pensare di utilizzare il tempo medio $\mu_{i}$ del tipo di cellula
-$\tau_{i}$ che ha probabilità $\pi_{i}$ maggiore per calcolare un numero
+È possibile pensare di utilizzare il tempo medio di divisione $\mu$ del tipo 
+di cellula con proporzionalità $\pi$ maggiore per calcolare un numero
 approssimativo di livello di divisioni tali per cui venga superato il
 $\tau_{max}$ definito per la simulazione.
 \\
@@ -471,39 +449,63 @@ per portare a termine la simulazione mediante una sola iterazione.
 Essendo però un processo di tipo stocastico, è possibile che il valore calcolato
 $\eta$ non rispecchi a pieno la realtà che si vuole simulare.
 \\
-Nel grafico in Figura \ref{chart:bounding-inference} si può notare un
+In Figura \ref{chart:bounding-inference} si può notare, grazie al bounding, un
 incremento di prestazioni fino
-ad un valore di $\tau_{max}$ di $720$, questo perché sebbene venga applicata
+ad un valore di $\tau_{max}$ di $720$, questo perché, sebbene venga applicata
 l'inferenza dei parametri, l'algoritmo prevede l'istanziamento di $\eta$
 livelli solamente se è disponibile abbastanza memoria all'interno della GPU.
-Infatti con una valore di $\tau_{max} > 720$ non è presente nessun aumento
+Infatti, con una valore di $\tau_{max} > 720$ non è presente nessun aumento
 di prestazioni poiché la GPU utilizzata non ha abbastanza memoria per istanziare
 un numero di livelli pari a $\eta$ inferito dai parametri iniziali.
 Quindi risulta sicuramente un vantaggio l'utilizzo di GPU con molta memoria
 dedicata a disposizione.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[legend pos=outer north east,
+                xtick=data,
+                xlabel={$\tau_{max}$ (h)},
+                ylabel={tempo di esecuzione (s)}
+            ]
+            \addplot table[x=Time, y=Bounding] {Data/Accelerants/fit.txt};
+            \addplot table[x=Time, y=Inference] {Data/Accelerants/fit.txt};
+            \legend{Bounding, Inferenza}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Confronto dei tempi di esecuzione (in secondi) fra la versione 
+    dell'algoritmo
+    parallelo che implementa le ottimizzazioni descritte fino al
+    metodo del bounding
+    e la versione che, oltre a quest'ultimo, utilizza anche l'inferenza del numero
+    di livelli necessari alla simulazione,
+    utilizzando differenti valori di tempo massimo di proliferazione
+    $\tau_{max}$}
+    \label{chart:bounding-inference}
+\end{figure}
 
 % Descrizione della costruzione dell'istogramma finale
 \paragraph{Calcolo dell'istogramma finale}\mbox{}
 
 Sebbene le performance siano aumentate, il software fa ancora molto affidamento
 sulla CPU per il calcolo dell'istogramma finale.
-Ad ogni iterazione l'array della popolazione $X_{n}$ viene trasferito
-attraverso la CPU in memoria centrale per essere filtrato e per aggiornare i
-risultati dell'istogramma. Questo processo è possibile grazie alla funzione
+Al termine di ogni iterazione l'array della popolazione $X_{n}$ viene trasferito
+attraverso la CPU in memoria centrale in modo da rimuovere gli elementi 
+rappresentanti cellule $Inactive$ e $Remove$ aggiornando l'istogramma 
+dei risultati. Questa operazione è possibile grazie alla funzione
 \textit{cudaMemcpy()} che si occupa del trasferimento dei dati tra CPU e GPU.
-Diverse chiamate a questa funzione generano un lavoro intensivo che deve essere
-effettuato, quindi impatta ulteriormente sullo speedup della simulazione.
+Diverse chiamate a questa funzione generano un lavoro intensivo che 
+influisce ulteriormente sullo speedup della simulazione.
 L'obiettivo è quindi cercare di minimizzare il numero di trasferimenti tramite
 \textit{cudaMemcpy()}.
 \\
 La soluzione risiede nella possibilità di calcolare l'istogramma direttamente
 sulla GPU. Assumendo di conoscere un array $\Omega$ ordinato in modo crescente
-contenente tutti possibili valori di fluorescenza
+contenente tutti i possibili valori di fluorescenza
 $\varphi$ che una cellula potrà assumere in futuro, è possibile far eseguire
 ad un thread del kernel (se computando una cellula $Active$ essa non è più in
 grado di proliferare) una ricerca binaria su $\Omega$ e aggiornare
 il valore di frequenza $\psi$ corrispondente alla fluorescenza trovata, tramite
-la funzione $atomicAdd()$ di CUDA, la quale anche se prevede una
+la funzione $atomicAdd()$ di CUDA. Questa funzione prevede una
 sincronizzazione sulla risorsa a cui si vuole accedere, è necessaria dato che
 ad ora non esiste un altro modo per il calcolo di un istogramma attraverso un
 algoritmo parallelo.
@@ -511,7 +513,7 @@ algoritmo parallelo.
 Conoscendo l'istogramma iniziale $H(0)$ si hanno già a disposizione
 tutti i valori di fluorescenza che una cellula potrà assumere, infatti
 $\Omega$ conterrà tutti i valori di $H(0)$ tali che $\varphi_{i} \geqslant
-\varphi_{min}$ e i successivi valori $\varphi_{i}^{-2j}$ con $j \in \N, j > 0$.
+\varphi_{min}$ e i successivi valori $\varphi_{i}/{2j}$ con $j \in \N, j > 0$.
 \\
 Questa tecnica evita il trasferimento dati al termine di ogni iterazione, poiché
 la frequenza riguardante i valori di fluorescenza delle cellule $Inactive$
@@ -519,7 +521,7 @@ la frequenza riguardante i valori di fluorescenza delle cellule $Inactive$
 Mediante questa tecnica la $cudaMemcpy()$ viene utilizzata solamente a inizio
 e fine simulazione per il salvataggio dei risultati.
 \\
-Come si evince dal grafico in Figura \ref{chart:inference-histogram}, 
+Come si evince dalla Figura \ref{chart:inference-histogram}, 
 questa è la tecnica di ottimizzazione che incrementa maggiormente
 le performance dell'algoritmo, dato che risolve quasi totalmente il problema
 del collo di bottiglia causato dal trasferimento bidirezionale delle informazioni
@@ -530,19 +532,19 @@ per l'avanzamento della simulazione.
     \begin{tikzpicture}
         \begin{axis}[legend pos=outer north east,
                 xtick=data,
-                xlabel={$\tau_{max}$},
-                ylabel={simulation time (s)}
+                xlabel={$\tau_{max}$ (h)},
+                ylabel={tempo di esecuzione (s)}
             ]
             \addplot table[x=Time, y=Inference] {Data/Accelerants/fit.txt};
             \addplot table[x=Time, y=Histogram] {Data/Accelerants/fit.txt};
             \legend{Inferenza, Istogramma parallelo}
         \end{axis}
     \end{tikzpicture}
-    \caption{Confronto dei tempi di esecuzione (in secondi) dell'algoritmo
-    parallelo fra la versione che implementa le ottimizzazioni descritte fino al
+    \caption{Confronto dei tempi di esecuzione (in secondi) fra la versione 
+    dell'algoritmo parallelo che implementa le ottimizzazioni descritte fino al
     metodo dell'inferenza dei parametri
-    e la versione che oltre a quest'ultimo implementa anche il calcolo parallelo
-    dell'istogramma finale,
+    e la versione che, oltre a quest'ultimo, implementa anche il calcolo 
+    parallelo dell'istogramma finale,
     utilizzando differenti valori di tempo massimo di proliferazione
     $\tau_{max}$}
     \label{chart:inference-histogram}
@@ -554,10 +556,10 @@ per l'avanzamento della simulazione.
 \subsection{Gestione della memoria}
 
 L'implementazione delle ottimizzazioni descritte in precedenza
-ha migliorato di gran lunga
+ha migliorato notevolmente
 le performance dell'algoritmo, ma ha introdotto un problema, ovvero la crescita
 esponenziale delle risorse da allocare.
-Infatti data la numerosità $L$ della popolazione iniziale $X_{0}$, essa cresce
+Infatti, data la numerosità $L$ della popolazione iniziale $X_{0}$, essa cresce
 esponenzialmente con il numero dei livelli dell'albero $L * 2^i$ con
 $i \in \N, i > 0$. Inizialmente questa crescita era mitigata dal fatto che
 dopo ogni iterazione la popolazione veniva filtrata, quindi procedendo verso
@@ -569,8 +571,8 @@ comunque presenti ancora all'interno delle diverse popolazioni, dato che
 dopo ogni iterazione la memoria non viene più filtrata in quanto non più
 trasferita sulla CPU.
 \\
-La crescita esponenziale dell'occupazione di memoria visibile in Figura
-\ref{chart:serial-parallel-histogram} potrebbe essere un
+La crescita esponenziale dell'occupazione di memoria, visibile in Figura
+\ref{chart:serial-parallel-histogram}, potrebbe essere un
 problema nel momento in cui il tempo $\tau_{max}$ inizia a crescere
 ulteriormente. La soluzione immediata a questo problema potrebbe essere di
 natura economica, ovvero l'acquisto di GPU moderne con molta memoria a
