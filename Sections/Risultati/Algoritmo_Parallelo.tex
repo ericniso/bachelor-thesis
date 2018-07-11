@@ -16,12 +16,30 @@ L'istogramma $H(0)$ che riporta i valori di fluorescenza con la rispettiva
 frequenza è salvato su un file di testo che deve essere letto in modo
 sequenziale. Una volta letto l'intero file, viene creato un array i cui
 elementi saranno le coppie di valori $(\varphi_{i}, \psi_{i})$.
-Ora che è nota la frequenza $\psi_{i}$ per ogni fluorescenza $\varphi_{i}$,
+Nota la frequenza $\psi_{i}$ per ogni valore di fluorescenza $\varphi_{i}$,
 è possibile invocare l'esecuzione di un kernel per ogni coppia di
 valori 
-in modo tale che ogni thread si occupi di generare una cellula avente
-$\varphi_{i}$ valore di fluorescenza come rappresentato in Figura
+in modo tale che ogni thread si occupi di generare una cellula avente 
+valore di fluorescenza $\varphi_{i}$ come rappresentato in Figura
 \ref{fig:population-creation}.
+Oltre al valore di fluorescenza, ogni cellula è caratterizzata da un tipo 
+fra i seguenti \cite{aml2018unimib}: 
+\textit{inattiva, proliferante, proliferazione lenta, proliferazione rapida}, 
+a cui sono associati specifici valori, tranne per la tipologia di cellule
+inattive, dato che per queste cellule non si verifica mai un evento di 
+divisione:
+
+\begin{itemize}
+    \item intervallo medio di divisione: valore indicante il tempo in ore
+        necessario per il verificarsi di un evento di divisione cellulare;
+    \item deviazione standard dell'intervallo medio di divisione: deviazione 
+        standard del valore descritto in precedenza.
+\end{itemize}
+Tramite i valori appena descritti, viene creata per ogni nuova cellula 
+una variabile timer $\mu$, derivata da una 
+distribuzione normale, e utilizzata per incrementare il valore di una variabile 
+$\tau$ rappresentante il tempo di vita delle cellule generate da un 
+evento di divisione cellulare.
 \\
 \begin{figure}[h]
     \centering
@@ -52,39 +70,39 @@ $\varphi_{i}$ valore di fluorescenza come rappresentato in Figura
 \subsection{Simulazione della proliferazione cellulare}
 
 La popolazione iniziale $X_{0}$ contiene elementi $X_{0,i}$, ognuno dei quali 
-con  l'avanzamento della simulazione da origine a due nuovi elementi che 
+con  l'avanzamento della simulazione dà origine a due nuovi elementi che 
 rappresentano le nuove cellule generate a seguito di un evento di divisione 
 cellulare.
 \\
 Per la simulazione viene invocato un kernel specifico tale che $X_{0,i}$ sia 
 un elemento dell'array iniziale
 con $i < L$, a cui è associato un certo valore $\varphi_{j}$
-con $j < |\varphi|$ e sia $X_{1}$ un array rappresentante la nuova
+con $j < |H(0)|$. Denotiamo con $X_{1}$ un array rappresentante la nuova
 popolazione cellulare.
 Dal kernel invocato, per ogni $X_{0,i}$ viene dedicato un GPU thread,
 che si occuperà di creare due nuove cellule con fluorescenza dimezzata
 rispetto alla fluorescenza della cellula originaria e genererà
-il nuovo timer delle cellule sulla base del tipo di cellula considerata.
+il nuovo timer $\mu$ delle cellule sulla base del tipo di cellula considerata.
 \\
 Le nuove cellule sviluppate dalla proliferazione
 di $X_{0, i}$ saranno individuate dai seguenti elementi
 $$X_{1, (2 * i)}$$ $$X_{1, (2 * i + 1)}$$
 
-Esse avranno il proprio tempo di vita globale $\tau$
+Esse avranno il proprio tempo di vita $\tau$
 incrementato secondo la seguente formula
-$$\tau[X_{1, (2 * i)}] = \tau[X_{0, i}] + \mu[X_{0, i}]$$
+$$\tau[X_{1, (2 * i)}] = \tau[X_{0, i}] + \mu[X_{0, i}],$$
 dove $\mu[X_{0, i}]$ indica il tempo dopo il quale la cellula $X_{0,i}$
 procede alla propria divisione.
 \\
-La simulazione prevede un tempo massimo $\tau_{max}$ e una soglia minima
-$\varphi_{min}$ entro il quale procedere
+La simulazione prevede un tempo massimo $\tau_{max}$ e una soglia minima 
+di fluorescenza $\varphi_{min}$ entro cui procedere
 alla divisione di una cellula, dunque il fenomeno appena descritto avviene
-solamente se $\tau[X_{0, i}] + \mu[X_{0, i}] \leqslant \tau_{max}$ oppure se
-$\varphi[X_{0, i}] / 2 \geqslant \varphi_{min}$.
+solamente se $\tau[X_{0, i}] + \mu[X_{0, i}] \leqslant \tau_{max} \land 
+\varphi[X_{0, i}] / 2 \geqslant \varphi_{min}$.
 Questa restrizione implica che all'interno di $X_{1}$ alcuni elementi non
 vengano computati. Per ovviare a questo inconveniente è stato deciso di
 assegnare ad ogni cellula uno stato locale
-$\sigma \in \{Alive, Inactive, Remove\}$ indicatore del fatto che la cellula
+$\sigma \in \{Alive, Inactive, Remove\}$, che indica se la cellula
 può oppure non può più procedere ulteriormente con la divisione.
 \\
 Sia $\sigma$ l'array degli stati di ogni cellula, allora è possibile riassumere
@@ -99,24 +117,25 @@ $$\varphi[X_{0, i}] / 2 \leqslant \varphi_{min}
 
 Una volta che il kernel ha terminato l'esecuzione di tutti i thread, il
 controllo passa nuovamente alla CPU.
-L'implementazione del metodo a stati risulta essere necessario poiché a seguito
-dell'evento di proliferazione cellulare
+L'implementazione del metodo a stati risulta essere necessario poiché, 
+a seguito dell'evento di proliferazione cellulare,
 si deve procedere all'aggiornamento dei risultati rimuovendo
 da $X_{1}$ le cellule $Inactive$ e aggiungendole ad un nuovo array dei
 risultati denominato $P$.
-Si procede inoltre all'eliminazione delle cellule con stato $Remove$ in quanto
-possiedono un valore di fluorescenza $\varphi$ sotto la soglia $\varphi_{min}$.
-L'array risultante conterrà solamente cellule $Alive$, dunque è possibile
-utilizzare $X_{1}$ come nuovo array iniziale e reiterare
-il processo appena descritto fino a quando non saranno più presenti cellule
-$Alive$.
+Si procede inoltre all'eliminazione delle cellule con stato $Remove$, in quanto
+esse possiedono un valore di fluorescenza $\varphi$ inferiore alla soglia 
+$\varphi_{min}$. L'array risultante conterrà solamente cellule 
+$Alive$, dunque è possibile utilizzare $X_{1}$ come nuovo array iniziale e 
+reiterare il processo appena descritto fino a quando non saranno più presenti 
+cellule $Alive$.
 Terminate le iterazioni l'array $P$ conterrà tutte e sole le cellule che hanno
 superato il limite temporale $\tau_{max}$, dunque è possibile calcolare
-l'istogramma dei risultati utilizzando la funzioni definite dalle librerie
+l'istogramma dei risultati utilizzando le funzioni definite dalle librerie
 Thrust \cite{bell2011thrust} di CUDA e salvare il risultato ottenuto
 su file.
 \\
-Come è possibile notare dal grafico \ref{chart:python-cuda}, è presente un
+Come è possibile notare in Figura \ref{chart:python-cuda}, questa 
+implementazione permette di ottenere un
 cospicuo aumento delle performance
 rispetto alla versione non parallela dell'algoritmo, ma non è ancora 
 sufficiente per quanto riguarda i risultati che si vogliono ottenere e per 
@@ -127,16 +146,16 @@ della versione implementata per CPU.
     \begin{tikzpicture}
         \begin{axis}[legend pos=outer north east,
                 xtick=data,
-                xlabel={$\tau_{max}$},
-                ylabel={simulation time (s)}
+                xlabel={$\tau_{max}$ (h)},
+                ylabel={tempo di esecuzione (s)}
             ]
             \addplot table[x=Time, y=Python] {Data/Accelerants/fit.txt};
             \addplot table[x=Time, y=Original] {Data/Accelerants/fit.txt};
             \legend{Python,CUDA}
         \end{axis}
     \end{tikzpicture}
-    \caption{Confronto dei tempi di esecuzione (in secondi) dell'algoritmo per
-        la simulazione fra la versione sviluppata in Python e quella sviluppata
+    \caption{Confronto dei tempi di esecuzione (in secondi) dell'algoritmo 
+        sviluppato in Python e quello sviluppato
         in CUDA C, utilizzando differenti valori di tempo massimo di
         proliferazione $\tau_{max}$}
     \label{chart:python-cuda}
